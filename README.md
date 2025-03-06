@@ -2,7 +2,7 @@
 
 Generate backend project using: https://start.spring.io
 
-# LAB2: Getting started with an MVC Application and Unit Testing
+** LAB2: Getting started with an MVC Application and Unit Testing **
 
 -> models (main entities of the application )
 
