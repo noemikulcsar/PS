@@ -20,5 +20,5 @@ Generate backend project using: https://start.spring.io
 
 -> controllers (example controller for CRUD operations on a simple entity)
 
--> Postamn collection for testing the requests
+-> Postman collection for testing the requests
 
