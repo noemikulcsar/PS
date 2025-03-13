@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Owners List</title>
+</head>
+<body>
+<h1>Owners</h1>
+<a href="/owners/new">Create New Owner</a>
+<table border="1">
+    <tr>
+        <th>ID</th>
+        <th>Name</th>
+    </tr>
+    <tr th:each="owner : ${owners}">
+        <td th:text="${owner.id}"></td>
+        <td th:text="${owner.name}"></td>
+        <td>
+            <a th:href="@{/ownes/edit/{id}(id=${owner.id})}">Edit</a> |
+            <a th:href="@{/templates/templates/delete/{id}(id=${owner.id})}">Delete</a>
+        </td>
+    </tr>
+</table>
+</body>
+</html>
