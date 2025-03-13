@@ -1,0 +1,129 @@
+{
+	"info": {
+		"_postman_id": "2bc3ba46-a273-455b-a8f6-90d10444712e",
+		"name": "OwnerController API",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "8241552"
+	},
+	"item": [
+		{
+			"name": "Get All Owners",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/owner",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"owner"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Create Owner",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/x-www-form-urlencoded"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "777",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "Postman",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/owner/save",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"owner",
+						"save"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Update Owner",
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "urlencoded",
+					"urlencoded": [
+						{
+							"key": "id",
+							"value": "777",
+							"type": "text"
+						},
+						{
+							"key": "name",
+							"value": "Postman Update",
+							"type": "text"
+						}
+					]
+				},
+				"url": {
+					"raw": "{{baseUrl}}/owner/update",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"owner",
+						"update"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Delete Owner",
+			"request": {
+				"method": "GET",
+				"header": [],
+				"url": {
+					"raw": "{{baseUrl}}/owner/delete/141",
+					"host": [
+						"{{baseUrl}}"
+					],
+					"path": [
+						"owner",
+						"delete",
+						"141"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"variable": [
+		{
+			"key": "baseUrl",
+			"value": "http://localhost:8080",
+			"type": "string"
+		}
+	]
+}
