@@ -33,7 +33,18 @@ public class EventRepository {
                 .findFirst()
                 .orElse(null);
     }
-
+    public List<Event> findAllByVenueId(Long venueId) {
+        return events.stream()
+                .filter(event -> event.getVenue().getId().equals(venueId))
+                .toList();
+    }
+    public void updateVenueCapacity(Long venueId, int newCapacity) {
+        events.forEach(event -> {
+            if (event.getVenue().getId().equals(venueId)) {
+                event.getVenue().setCapacity(newCapacity);
+            }
+        });
+    }
     public Event update(Event updatedEvent) {
         Event existingEvent = findById(updatedEvent.getId());
         if (existingEvent != null) {

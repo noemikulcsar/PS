@@ -27,15 +27,16 @@
             <label class="form-label">Descriere</label>
             <textarea class="form-control" name="description" required th:text="${event.description}"></textarea>
         </div>
-        <div class="mb-3">
-            <label class="form-label">Locație</label>
-            <input type="hidden" name="venue.id" th:value="${event.venue != null ? event.venue.id : ''}">
-            <input type="text" class="form-control" name="venue.name" th:value="${event.venue != null ? event.venue.name : ''}" required>
-        </div>
 
         <div class="mb-3">
-            <label class="form-label">Adresă</label>
-            <input type="text" class="form-control" name="venue.address" th:value="${event.venue != null ? event.venue.address : ''}" required>
+            <label class="form-label">Locație</label>
+            <select class="form-select" name="venueId" required>
+                <option th:each="venue : ${venues}"
+                        th:value="${venue.id}"
+                        th:text="${venue.name + ' - ' + venue.address}"
+                        th:selected="${event.venue != null && event.venue.id == venue.id}">
+                </option>
+            </select>
         </div>
 
         <div class="mb-3">

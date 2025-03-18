@@ -36,7 +36,12 @@ public class EventServiceImpl implements EventService {
 
     @Override
     public Event updateEvent(Event event) {
-        return eventRepository.update(event);
+        Event updatedEvent = eventRepository.update(event);
+        if (updatedEvent != null) {
+            eventRepository.updateVenueCapacity(event.getVenue().getId(), event.getVenue().getCapacity());
+        }
+
+        return updatedEvent;
     }
 
     @Override
