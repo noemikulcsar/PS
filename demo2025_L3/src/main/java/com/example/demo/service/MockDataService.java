@@ -1,13 +1,8 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Building;
-import org.springframework.stereotype.Service;
-
+import com.example.demo.model.Event;
 import java.util.List;
 
-@Service
 public interface MockDataService {
-    void generateMockData();
-    List<Building> getBuildings();
+    List<Event> getEvents();
 }
-

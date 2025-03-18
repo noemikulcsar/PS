@@ -1,104 +1,56 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.constants.ApartmentType;
-import com.example.demo.model.*;
-import com.example.demo.repository.ApartmentRepository;
-import com.example.demo.repository.BuildingRepository;
-import com.example.demo.repository.CommonSpaceRepository;
-import com.example.demo.repository.OwnerRepository;
+import com.example.demo.model.Event;
+import com.example.demo.model.Venue;
+import com.example.demo.repository.EventRepository;
 import com.example.demo.service.MockDataService;
-import jakarta.annotation.PostConstruct;
-import net.datafaker.Faker;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
+import jakarta.annotation.PostConstruct;
+
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Random;
 
-@Component
+@Service
 public class MockDataServiceImpl implements MockDataService {
-    private final Faker faker = new Faker();
-    private final Random random = new Random();
+    private final EventRepository eventRepository;
 
-    private final BuildingRepository buildingRepository;
-    private final ApartmentRepository apartmentRepository;
-    private final OwnerRepository ownerRepository;
-    private final CommonSpaceRepository commonSpaceRepository;
-
-    public MockDataServiceImpl(BuildingRepository buildingRepository,
-                               ApartmentRepository apartmentRepository,
-                               OwnerRepository ownerRepository,
-                               CommonSpaceRepository commonSpaceRepository) {
-        this.buildingRepository = buildingRepository;
-        this.apartmentRepository = apartmentRepository;
-        this.ownerRepository = ownerRepository;
-        this.commonSpaceRepository = commonSpaceRepository;
+    public MockDataServiceImpl(EventRepository eventRepository) {
+        this.eventRepository = eventRepository;
     }
 
     @PostConstruct
-    public void init() {
-        generateMockData();
+    public void generateMockData() {
+        Venue venue1 = new Venue(1L, "Teatrul Național", "Bd. Principal 123", 500);
+        Venue venue2 = new Venue(2L, "Opera Română", "Str. Muzicii 45", 800);
+        Venue venue3 = new Venue(3L, "Sala Palatului", "Calea Victoriei 60", 1000);
+        Venue venue4 = new Venue(4L, "Teatrul de Comedie", "Str. Smârdan 10", 350);
+
+        LocalDate date1 = LocalDate.of(2025, 3, 17);
+        LocalDate date2 = LocalDate.of(2025, 4, 30);
+        LocalDate date3 = LocalDate.of(2025, 5, 15);
+        LocalDate date4 = LocalDate.of(2025, 6, 10);
+        LocalDate date5 = LocalDate.of(2025, 7, 5);
+        LocalDate date6 = LocalDate.of(2025, 8, 20);
+
+        Event event1 = new Event(1L, "Hamlet", "Tragedie de Shakespeare", date1, venue1, new ArrayList<>());
+        Event event2 = new Event(2L, "Lacul Lebedelor", "Balet clasic", date2, venue2, new ArrayList<>());
+        Event event3 = new Event(3L, "Carmina Burana", "Spectacol coral-simfonic", date3, venue3, new ArrayList<>());
+        Event event4 = new Event(4L, "O scrisoare pierdută", "Comedie de I.L. Caragiale", date4, venue4, new ArrayList<>());
+        Event event5 = new Event(5L, "Flaut fermecat", "Operă de Mozart", date5, venue2, new ArrayList<>());
+        Event event6 = new Event(6L, "Rigoletto", "Operă de Verdi", date6, venue3, new ArrayList<>());
+
+        eventRepository.save(event1);
+        eventRepository.save(event2);
+        eventRepository.save(event3);
+        eventRepository.save(event4);
+        eventRepository.save(event5);
+        eventRepository.save(event6);
     }
 
     @Override
-    public void generateMockData() {
-        List<Building> buildings = new ArrayList<>();
-
-        for (int i = 1; i <= 3; i++) {
-            Building building = new Building();
-            building.setId((long) i);
-            building.setName(faker.address().buildingNumber() + " " + faker.address().streetName());
-
-            List<Apartment> apartments = new ArrayList<>();
-            List<Owner> owners = new ArrayList<>();
-
-            for (int j = 1; j <= 5; j++) {
-                Apartment apartment = new Apartment();
-                apartment.setId((long) (i * 10 + j));
-                apartment.setNumber(String.valueOf(100 + j));
-                apartment.setApartmentType(ApartmentType.values()[random.nextInt(ApartmentType.values().length)]);
-
-                List<Owner> apartmentOwners = new ArrayList<>();
-                for (int k = 1; k <= random.nextInt(3) + 1; k++) {
-                    Owner owner = new Owner();
-                    owner.setId((long) (i * 100 + j * 10 + k));
-                    owner.setName(faker.name().fullName());
-                    owner.setApartments(new ArrayList<>());
-                    apartmentOwners.add(owner);
-                    owners.add(owner);
-                }
-                apartment.setOwners(apartmentOwners);
-                apartments.add(apartment);
-            }
-
-            building.setApartments(apartments);
-            building.setCommonSpace(generateRandomCommonSpace());
-            buildings.add(building);
-
-            apartmentRepository.saveAll(apartments);
-            ownerRepository.saveAll(owners);
-            buildingRepository.save(building);
-            commonSpaceRepository.save(building.getCommonSpace());
-        }
-    }
-
-    private CommonSpace generateRandomCommonSpace() {
-        if (random.nextBoolean()) {
-            Parking parking = new Parking();
-            parking.setId(faker.number().randomNumber());
-            parking.setSurface(faker.number().numberBetween(50, 500));
-            parking.setNoOfSpots((long) faker.number().numberBetween(10, 100));
-            return parking;
-        } else {
-            Terrace terrace = new Terrace();
-            terrace.setId(faker.number().randomNumber());
-            terrace.setSurface(faker.number().numberBetween(30, 300));
-            terrace.setHasPool(random.nextBoolean());
-            return terrace;
-        }
-    }
-
-    public List<Building> getBuildings() {
-        return buildingRepository.findAll();
+    public List<Event> getEvents() {
+        return eventRepository.findAll();
     }
 }

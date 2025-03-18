@@ -1,0 +1,37 @@
+<div th:fragment="eventModal">
+    <div class="modal fade" id="eventModal" tabindex="-1" aria-labelledby="modalTitle" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="modalTitle">Adaugă Eveniment</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <form th:action="@{/events}" method="post">
+                        <input type="hidden" id="eventId" name="id">
+
+                        <div class="mb-3">
+                            <label for="eventName" class="form-label">Nume Eveniment</label>
+                            <input type="text" class="form-control" id="eventName" name="name" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="venueName" class="form-label">Locație</label>
+                            <input type="text" class="form-control" id="venueName" name="venueName" required>
+                        </div>
+
+                        <div class="mb-3">
+                            <label for="eventDate" class="form-label">Data</label>
+                            <input type="date" class="form-control" id="eventDate" name="date" required>
+                        </div>
+
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Anulează</button>
+                            <button type="submit" class="btn btn-primary">Salvează Eveniment</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

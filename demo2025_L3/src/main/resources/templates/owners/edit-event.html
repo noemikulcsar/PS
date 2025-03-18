@@ -1,0 +1,57 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Editează Eveniment</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/">Teatru & Operă</a>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="text-center">Editează Eveniment</h2>
+
+    <form th:action="@{/events/update}" method="post">
+        <input type="hidden" name="id" th:value="${event.id}">
+
+        <div class="mb-3">
+            <label class="form-label">Nume Eveniment</label>
+            <input type="text" class="form-control" name="name" th:value="${event.name}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Descriere</label>
+            <textarea class="form-control" name="description" required th:text="${event.description}"></textarea>
+        </div>
+        <div class="mb-3">
+            <label class="form-label">Locație</label>
+            <input type="hidden" name="venue.id" th:value="${event.venue != null ? event.venue.id : ''}">
+            <input type="text" class="form-control" name="venue.name" th:value="${event.venue != null ? event.venue.name : ''}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Adresă</label>
+            <input type="text" class="form-control" name="venue.address" th:value="${event.venue != null ? event.venue.address : ''}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Dată</label>
+            <input type="date" class="form-control" name="date" th:value="${event.date}" required>
+        </div>
+
+        <div class="mb-3">
+            <label class="form-label">Capacitate</label>
+            <input type="text" class="form-control" name="venue.capacity" th:value="${event.venue.capacity}" required>
+        </div>
+
+        <button type="submit" class="btn btn-primary">Salvează</button>
+        <a href="/events" class="btn btn-secondary">Anulează</a>
+    </form>
+</div>
+
+</body>
+</html>

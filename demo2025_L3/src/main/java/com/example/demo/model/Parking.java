@@ -6,7 +6,7 @@ import lombok.*;
 @NoArgsConstructor
 @Getter
 @Setter
-public class Parking extends CommonSpace {
+public class Parking extends Venue {
     private Long noOfSpots;
 
 

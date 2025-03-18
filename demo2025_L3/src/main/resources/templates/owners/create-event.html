@@ -1,0 +1,69 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Creează Eveniment</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="/events">Teatru & Operă</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+    </div>
+</nav>
+
+<!-- Container principal -->
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Creează Eveniment Nou</h2>
+
+    <!-- Card pentru formular -->
+    <div class="card shadow-sm">
+        <div class="card-body">
+            <form th:action="@{/events/create}" method="post" th:object="${event}">
+                <div class="mb-3">
+                    <label class="form-label" for="name">Nume Eveniment</label>
+                    <input type="text" class="form-control" id="name" th:field="*{name}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="description">Descriere</label>
+                    <textarea class="form-control" id="description" th:field="*{description}" rows="3" required></textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="date">Dată</label>
+                    <input type="date" class="form-control" id="date" th:field="*{date}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="venueName">Nume Locație</label>
+                    <input type="text" class="form-control" id="venueName" name="venue.name" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="venueAddress">Adresă Locație</label>
+                    <input type="text" class="form-control" id="venueAddress" name="venue.address" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label" for="venueCapacity">Capacitate</label>
+                    <input type="text" class="form-control" id="venueCapacity" name="venue.capacity" required>
+                </div>
+
+                <!-- Butoane de acțiune -->
+                <div class="d-flex justify-content-between">
+                    <a href="/events" class="btn btn-secondary">Înapoi la listă</a>
+                    <button type="submit" class="btn btn-success">Creează Eveniment</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+</body>
+</html>
