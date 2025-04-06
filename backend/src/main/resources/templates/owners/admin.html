@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" th:replace="owners/layout :: content">
+<body>
+
+<h2 class="mb-4">Administrare Evenimente</h2>
+
+<a class="btn btn-success mb-3" href="/events/new">Adaugă Eveniment</a>
+
+<table class="table table-striped shadow">
+    <thead class="table-dark">
+    <tr>
+        <th>Nume</th>
+        <th>Locație</th>
+        <th>Data</th>
+        <th>Acțiuni</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="event : ${events}">
+        <td th:text="${event.name}"></td>
+        <td th:text="${event.venue.name}"></td>
+        <td th:text="${event.date}"></td>
+        <td>
+            <a class="btn btn-warning btn-sm" th:href="@{/events/edit/{id}(id=${event.id})}">Editează</a>
+            <a class="btn btn-danger btn-sm" th:href="@{/events/delete/{id}(id=${event.id})}"
+               onclick="return confirm('Ești sigur?')">Șterge</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

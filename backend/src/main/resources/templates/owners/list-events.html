@@ -1,0 +1,85 @@
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <title>Lista Evenimentelor</title>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</head>
+<body>
+
+<!-- Navbar -->
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+    <div class="container-fluid">
+        <a class="navbar-brand" href="#">Teatru & Operă</a>
+        <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav"
+                aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav">
+                <li class="nav-item">
+                    <a class="btn btn-primary ms-2" th:href="@{/events/create}">
+                        Creează Eveniment
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<div class="container mt-4">
+    <h2 class="text-center mb-4">Evenimente Disponibile</h2>
+
+    <!-- Afișare mesaj dacă lista e goală -->
+    <div th:if="${#lists.isEmpty(events)}">
+        <p class="text-muted text-center">Momentan nu există evenimente disponibile.</p>
+    </div>
+
+    <!-- Tabel Evenimente -->
+    <table class="table table-striped" th:if="${not #lists.isEmpty(events)}">
+        <thead class="table-dark">
+        <tr>
+            <th>ID</th>
+            <th>Nume</th>
+            <th>Locație</th>
+            <th>Acțiuni</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="event : ${events}">
+            <td th:text="${event.id}"></td>
+            <td th:text="${event.name}"></td>
+            <td th:text="${event.venue.name}"></td>
+            <td>
+                <a class="btn btn-primary btn-sm" th:href="@{/events/details/{id}(id=${event.id})}">Vezi Detalii</a>
+                <a class="btn btn-warning btn-sm" th:href="@{/events/edit/{id}(id=${event.id})}">Editează</a>
+
+                <!-- Formular pentru ștergere cu POST -->
+                <form th:action="@{/events/delete/{id}(id=${event.id})}" method="post" style="display:inline;">
+                    <button type="submit" class="btn btn-danger btn-sm"
+                            onclick="return confirm('Sigur vrei să ștergi acest eveniment?')">Șterge</button>
+                </form>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+</div>
+
+<!-- Include Modal Fragment -->
+<div th:replace="~{/fragments/event-modal :: eventModal}"></div>
+
+<script>
+    function fillModalData(button) {
+        const id = button.getAttribute("data-bs-id");
+        const name = button.getAttribute("data-bs-name");
+        const venue = button.getAttribute("data-bs-venue");
+
+        document.getElementById("eventId").value = id || "";
+        document.getElementById("eventName").value = name || "";
+        document.getElementById("eventVenue").value = venue || "";
+
+        document.getElementById("modalTitle").textContent = id ? "Editează Eveniment" : "Creează Eveniment";
+    }
+</script>
+
+</body>
+</html>
