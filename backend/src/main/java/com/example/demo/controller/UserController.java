@@ -45,7 +45,7 @@ public class UserController {
         userService.deleteUser(id);
     }
 
-    @PostMapping("/login")
+    /*@PostMapping("/login")
     public ResponseEntity<User> login(@RequestBody User loginUser) {
         User user = userService.findByUsername(loginUser.getUsername());
 
@@ -54,7 +54,7 @@ public class UserController {
         }
 
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
-    }
+    }*/
     @GetMapping("/{id}/tickets")
     public List<Ticket> getUserTickets(@PathVariable Long id) {
         User user = userService.getUserById(id);

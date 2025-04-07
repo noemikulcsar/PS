@@ -13,7 +13,7 @@ public interface UserService {
 
     User updateUser(User user);
 
-    User authenticate(String username, String password);
+    //User authenticate(String username, String password);
     User findByUsername(String username);
     Ticket addTicketToUser(Long userId, Ticket ticket);
 }

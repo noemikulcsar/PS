@@ -28,7 +28,6 @@ function MapPage() {
                 const today = new Date();
                 const upcomingEvents = res.data.filter((event) => new Date(event.date) > today);
 
-                // Grupăm evenimentele după locație (lat,lng)
                 const grouped = {};
                 upcomingEvents.forEach((event) => {
                     if (event.venue?.latitude && event.venue?.longitude) {

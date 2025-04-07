@@ -46,13 +46,13 @@ public class UserServiceImpl implements UserService {
         userRepository.deleteById(id);
     }
 
-    @Override
+    /*@Override
     public User authenticate(String username, String password) {
         return userRepository.findAll().stream()
                 .filter(user -> user.getUsername().equals(username) && user.getPassword().equals(password))
                 .findFirst()
                 .orElse(null);
-    }
+    }*/
     @Override
     public User findByUsername(String username) {
         return userRepository.findAll().stream()
