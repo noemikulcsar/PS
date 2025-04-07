@@ -105,6 +105,16 @@ function EventsPage() {
                     <label>End Date:</label>
                     <input type="date" value={endDate} onChange={(e) => setEndDate(e.target.value)} />
                 </div>
+                <div className="filter-group">
+                    <label>Sort by:</label>
+                    <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                        <option value="">None</option>
+                        <option value="priceAsc">Price: Low to High</option>
+                        <option value="priceDesc">Price: High to Low</option>
+                        <option value="dateAsc">Date: Soonest First</option>
+                        <option value="dateDesc">Date: Latest First</option>
+                    </select>
+                </div>
                 <div className="filter-group checkbox-group">
                     <label>
                         <input
@@ -113,10 +123,6 @@ function EventsPage() {
                             onChange={(e) => setOnlyAvailable(e.target.checked)}
                         /> Show only available
                     </label>
-                </div>
-                <div className="button-group mt-3">
-                    <button className="btn" onClick={handleFilter}>Apply Filters</button>
-                    <button className="btn btn-secondary" onClick={handleReset}>Reset Filters</button>
                 </div>
 
                 <div className="location-filter-wrapper">
@@ -138,6 +144,10 @@ function EventsPage() {
                                 /> {loc}
                             </label>
                         ))}
+                    </div>
+                    <div className="button-group mt-3">
+                        <button className="btn" onClick={handleFilter}>Apply Filters</button>
+                        <button className="btn btn-secondary" onClick={handleReset}>Reset Filters</button>
                     </div>
                 </div>
             </div>
