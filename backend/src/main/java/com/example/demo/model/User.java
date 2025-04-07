@@ -16,4 +16,7 @@ public class User {
     private List<Ticket> tickets;
     private String username;
     private String password;
+    private String phone;
+    private String address;
+    private String profilePictureUrl;
 }

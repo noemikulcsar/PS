@@ -12,4 +12,6 @@ public class Venue {
     private String name;
     private String address;
     private int capacity;
+    private double latitude;
+    private double longitude;
 }

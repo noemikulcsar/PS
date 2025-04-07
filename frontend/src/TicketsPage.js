@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './TicketsPage.css';
 
 function TicketsPage() {
     const [tickets, setTickets] = useState([]);
+    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchTickets = async () => {
@@ -39,6 +41,13 @@ function TicketsPage() {
                             <p><strong>Location:</strong> {ticket.event?.venue?.name || 'N/A'} - {ticket.event?.venue?.address || ''}</p>
                             <p><strong>Seat:</strong> {ticket.seatNumber}</p>
                             <p><strong>Price:</strong> {ticket.price} RON</p>
+
+                            <button
+                                className="btn btn-outline-primary mt-2"
+                                onClick={() => navigate('/seat-map', { state: { ticket } })}
+                            >
+                                View Seat Map
+                            </button>
                         </div>
                     ))}
                 </div>

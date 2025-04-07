@@ -6,6 +6,10 @@ import PaymentPage from './PaymentPage';
 import EventsPage from './EventsPage';
 import TicketsPage from './TicketsPage';
 import ConfirmPaymentPage from './ConfirmPaymentPage';
+import 'leaflet/dist/leaflet.css';
+import MapPage from './MapPage';
+import SeatMapPage from './SeatMapPage';
+import ProfilePage from './ProfilePage'
 
 function App() {
     const [user, setUser] = useState(() => {
@@ -36,6 +40,12 @@ function App() {
                 <Route
                     path="/payment/confirm"
                     element={user ? <ConfirmPaymentPage /> : <Navigate to="/login" />}
+                />
+                <Route path="/map" element={user ? <MapPage /> : <Navigate to="/login" />} />
+                <Route path="/seat-map" element={<SeatMapPage />} />
+                <Route
+                    path="/profile"
+                    element={user ? <ProfilePage /> : <Navigate to="/login" />}
                 />
             </Routes>
         </Router>

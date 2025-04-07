@@ -7,8 +7,13 @@ import com.example.demo.service.UserService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
 import java.util.List;
+import org.springframework.web.multipart.MultipartFile;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -68,5 +73,18 @@ public class UserController {
         } catch (IllegalArgumentException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
+    }
+    @PutMapping("/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        User user = userService.getUserById(id);
+        if (user == null) throw new RuntimeException("User not found");
+
+        user.setName(updatedUser.getName());
+        user.setEmail(updatedUser.getEmail());
+        user.setPhone(updatedUser.getPhone());
+        user.setAddress(updatedUser.getAddress());
+        user.setProfilePictureUrl(updatedUser.getProfilePictureUrl());
+
+        return userService.updateUser(user);
     }
 }
