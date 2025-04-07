@@ -60,4 +60,5 @@ public class TicketServiceImpl implements TicketService {
     public void cancelTicket(Long id) {
         ticketRepository.deleteById(id);
     }
+
 }

@@ -40,7 +40,7 @@ public class MockDataServiceImpl implements MockDataService {
         LocalDate date6 = LocalDate.of(2025, 11, 20);
 
         Event event1 = new Event(1L, "Hamlet", "Tragedie de Shakespeare", date1, venue1,  0, 30);
-        Event event2 = new Event(2L, "Lacul Lebedelor", "Balet clasic", date2, venue2,  0, 50);
+        Event event2 = new Event(2L, "Lacul Lebedelor", "Balet clasic", date2, venue2,  70, 50);
         Event event3 = new Event(3L, "Carmina Burana", "Spectacol coral-simfonic", date3, venue3,0, 50);
         Event event4 = new Event(4L, "O scrisoare pierdută", "Comedie de I.L. Caragiale", date4, venue4, 0, 45);
         Event event5 = new Event(5L, "Flaut fermecat", "Operă de Mozart", date5, venue2, 0, 65);
@@ -58,7 +58,7 @@ public class MockDataServiceImpl implements MockDataService {
         Event event17 = new Event(17L, "Trubadurul", "Operă de Giuseppe Verdi", LocalDate.of(2025, 7, 7), venue1, 0, 60);
         Event event18 = new Event(18L, "Bărbierul din Sevilla", "Comedie muzicală de Rossini", LocalDate.of(2024, 6, 25), venue4, 0, 50);
         Event event19 = new Event(19L, "Faust", "Operă în 5 acte de Charles Gounod", LocalDate.of(2024, 9, 22), venue2, 0, 80);
-        Event event20 = new Event(20L, "Otello", "Operă dramatică de Verdi", LocalDate.of(2023, 8, 30), venue3, 0, 85);
+        Event event20 = new Event(20L, "Otello", "Operă dramatică de Verdi", LocalDate.of(2023, 8, 30), venue3, 80, 85);
 
         eventRepository.save(event1);
         eventRepository.save(event2);
@@ -81,7 +81,7 @@ public class MockDataServiceImpl implements MockDataService {
         eventRepository.save(event19);
         eventRepository.save(event20);
 
-        User user1 = new User(1L,"Noemi","noemi@example.com",new ArrayList<>(),"noemi","1234");
+        User user1 = new User(1L,"Noemi Kulcsar","noemi@example.com",new ArrayList<>(),"noemi","1234");
         List<Ticket> user1Tickets = new ArrayList<>();
 
         Ticket ticket1 = new Ticket(1L, "A1", event15.getPrice(), false, event15);

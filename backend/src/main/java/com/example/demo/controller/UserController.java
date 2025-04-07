@@ -60,4 +60,13 @@ public class UserController {
     public User getUserById(@PathVariable Long id) {
         return userService.getUserById(id);
     }
+    @PostMapping("/{id}/tickets")
+    public ResponseEntity<Ticket> addTicketToUser(@PathVariable Long id, @RequestBody Ticket ticket) {
+        try {
+            Ticket addedTicket = userService.addTicketToUser(id, ticket);
+            return ResponseEntity.ok(addedTicket);
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+    }
 }

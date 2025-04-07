@@ -5,6 +5,7 @@ import HomePage from './HomePage';
 import PaymentPage from './PaymentPage';
 import EventsPage from './EventsPage';
 import TicketsPage from './TicketsPage';
+import ConfirmPaymentPage from './ConfirmPaymentPage';
 
 function App() {
     const [user, setUser] = useState(() => {
@@ -13,7 +14,6 @@ function App() {
     });
 
     useEffect(() => {
-        // Sync localStorage updates (optional if you allow logout)
         const handleStorageChange = () => {
             const updatedUser = JSON.parse(localStorage.getItem('user'));
             setUser(updatedUser);
@@ -33,6 +33,10 @@ function App() {
                 <Route path="/" element={<Navigate to="/login" replace />} />
                 <Route path="*" element={<Navigate to="/login" replace />} />
                 <Route path="/tickets" element={user ? <TicketsPage /> : <Navigate to="/login" />} />
+                <Route
+                    path="/payment/confirm"
+                    element={user ? <ConfirmPaymentPage /> : <Navigate to="/login" />}
+                />
             </Routes>
         </Router>
     );

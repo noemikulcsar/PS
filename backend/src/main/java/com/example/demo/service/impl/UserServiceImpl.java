@@ -1,8 +1,11 @@
 
 package com.example.demo.service.impl;
 
+import com.example.demo.model.Event;
+import com.example.demo.model.Ticket;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.repository.EventRepository;
 import com.example.demo.service.UserService;
 import org.springframework.stereotype.Service;
 
@@ -11,9 +14,11 @@ import java.util.List;
 @Service
 public class UserServiceImpl implements UserService {
     private final UserRepository userRepository;
+    private final EventRepository eventRepository;
 
-    public UserServiceImpl(UserRepository userRepository) {
+    public UserServiceImpl(UserRepository userRepository, EventRepository eventRepository) {
         this.userRepository = userRepository;
+        this.eventRepository = eventRepository;
     }
 
     @Override
@@ -54,5 +59,32 @@ public class UserServiceImpl implements UserService {
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()
                 .orElse(null);
+    }
+    @Override
+    public Ticket addTicketToUser(Long userId, Ticket ticket) {
+        User user = userRepository.findById(userId);
+        if (user == null) {
+            throw new IllegalArgumentException("User not found");
+        }
+
+        Event event = eventRepository.findById(ticket.getEvent().getId());
+        if (event == null) {
+            throw new IllegalArgumentException("Event not found");
+        }
+
+        int newSoldTickets = event.getSoldTickets() + 1;
+        event.setSoldTickets(newSoldTickets);
+
+        char rowLetter = (char) ('A' + ((newSoldTickets - 1) / 10));
+        int seatNumber = ((newSoldTickets - 1) % 10) + 1;
+        String generatedSeat = rowLetter + Integer.toString(seatNumber);
+
+        ticket.setId(System.currentTimeMillis());
+        ticket.setSeatNumber(generatedSeat);
+        ticket.setEvent(event);
+        ticket.setAvailable(false);
+
+        user.getTickets().add(ticket);
+        return ticket;
     }
 }
