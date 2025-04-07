@@ -89,8 +89,8 @@ function HomePage({ setUser }) {
             <footer className="homepage-footer">
                 <p>© 2025 Teatru & Operă | <a href="mailto:support@teatruopera.ro">support@teatruopera.ro</a></p>
                 <div className="socials">
-                    <a href="https://facebook.com" target="_blank" rel="noreferrer">Facebook</a> |
-                    <a href="https://instagram.com" target="_blank" rel="noreferrer"> Instagram</a> |
+                    <a href="https://www.facebook.com/operacluj" target="_blank" rel="noreferrer">Facebook</a> |
+                    <a href="https://www.instagram.com/teatrulnationalcluj/" target="_blank" rel="noreferrer"> Instagram</a> |
                     <a href="https://twitter.com" target="_blank" rel="noreferrer"> Twitter</a>
                 </div>
             </footer>
