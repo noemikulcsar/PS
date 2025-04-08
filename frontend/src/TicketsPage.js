@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import './TicketsPage.css';
+import QRCode from 'qrcode';
 
 function TicketsPage() {
     const [tickets, setTickets] = useState([]);
@@ -13,6 +14,8 @@ function TicketsPage() {
     const [endDate, setEndDate] = useState('');
     const [locations, setLocations] = useState([]);
     const [sortOption, setSortOption] = useState('');
+    const [visibleQrIndex, setVisibleQrIndex] = useState(null);
+    const [qrCodes, setQrCodes] = useState({});
 
     const navigate = useNavigate();
 
@@ -70,6 +73,17 @@ function TicketsPage() {
         setLocations([]);
         setSortOption('');
         setFilteredTickets(tickets);
+    };
+    const generateQr = async (ticket, index) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        const qrData = `Name: ${user.name}\nEvent: ${ticket.event.name}\nDate: ${ticket.event.date}\nSeat: ${ticket.seatNumber}`;
+        try {
+            const qrImage = await QRCode.toDataURL(qrData);
+            setQrCodes(prev => ({ ...prev, [index]: qrImage }));
+            setVisibleQrIndex(index);
+        } catch (err) {
+            console.error('Failed to generate QR code:', err);
+        }
     };
 
     const uniqueLocations = [...new Set(tickets.map(t => t.event?.venue?.name).filter(Boolean))];
@@ -136,7 +150,7 @@ function TicketsPage() {
                 <p className="text-muted text-center">No tickets match your filters.</p>
             ) : (
                 <div className="ticket-list">
-                    {filteredTickets.map(ticket => (
+                    {filteredTickets.map((ticket, index) => (
                         <div key={ticket.id} className="ticket-card">
                             <h3>{ticket.event?.name || 'Unknown Event'}</h3>
                             <p><strong>Description:</strong> {ticket.event?.description || 'N/A'}</p>
@@ -144,12 +158,44 @@ function TicketsPage() {
                             <p><strong>Location:</strong> {ticket.event?.venue?.name || 'N/A'} - {ticket.event?.venue?.address || ''}</p>
                             <p><strong>Seat:</strong> {ticket.seatNumber}</p>
                             <p><strong>Price:</strong> {ticket.price} RON</p>
-                            <button
-                                className="btn btn-outline-primary mt-2"
-                                onClick={() => navigate('/seat-map', { state: { ticket } })}
-                            >
-                                View Seat Map
-                            </button>
+
+                            <div className="d-flex gap-2 mt-2">
+                                <button
+                                    className="btn btn-outline-primary"
+                                    onClick={() => navigate('/seat-map', { state: { ticket } })}
+                                >
+                                    View Seat Map
+                                </button>
+                                <div
+                                    className="qr-wrapper"
+                                    onMouseEnter={async () => {
+                                        await generateQr(ticket, index);
+                                        setVisibleQrIndex(index);
+                                    }}
+                                    onMouseLeave={() => setVisibleQrIndex(null)}
+                                    onClick={() => {
+                                        const image = qrCodes[index];
+                                        if (image) {
+                                            const link = document.createElement('a');
+                                            link.href = image;
+                                            link.download = `ticket_qr_${ticket.id}.png`;
+                                            document.body.appendChild(link);
+                                            link.click();
+                                            document.body.removeChild(link);
+                                        }
+                                    }}
+                                >
+                                    <button className="btn btn-outline-success">
+                                        View QR Code
+                                    </button>
+                                    {visibleQrIndex === index && qrCodes[index] && (
+                                        <div className="qr-floating-box">
+                                            <img src={qrCodes[index]} alt="QR Code" />
+                                            <p style={{ fontSize: '0.75rem', marginTop: '5px' }}>Click to download</p>
+                                        </div>
+                                    )}
+                                </div>
+                            </div>
                         </div>
                     ))}
                 </div>

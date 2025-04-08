@@ -17,6 +17,7 @@ h2 {
     gap: 24px;
 }
 
+
 .ticket-card {
     background-color: #ffffff;
     padding: 1.8rem;
@@ -173,3 +174,35 @@ h2 {
 .button-group .btn:hover {
     background-color: #5a4bcf;
 }
+.qr-preview {
+    background: #f9f9f9;
+    border: 1px dashed #ccc;
+    padding: 10px;
+    margin-top: 10px;
+    text-align: center;
+    border-radius: 10px;
+}
+.qr-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+.qr-floating-box {
+    position: absolute;
+    top: -150px;
+    left: 50%;
+    transform: translateX(-50%);
+    background: white;
+    border: 1px solid #ccc;
+    padding: 10px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    z-index: 100;
+    transition: opacity 0.3s ease;
+}
+
+.qr-floating-box img {
+    width: 120px;
+    height: 120px;
+}
+
