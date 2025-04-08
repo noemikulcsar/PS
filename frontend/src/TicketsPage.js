@@ -159,8 +159,8 @@ function TicketsPage() {
                             <p><strong>Seat:</strong> {ticket.seatNumber}</p>
                             <p><strong>Price:</strong> {ticket.price} RON</p>
 
-                            <div className="d-flex gap-2 mt-2">
-                                <button
+                            <div className="ticket-actions">
+                            <button
                                     className="btn btn-outline-primary"
                                     onClick={() => navigate('/seat-map', { state: { ticket } })}
                                 >
