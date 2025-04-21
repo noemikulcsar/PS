@@ -1,9 +1,13 @@
 package com.example.demo.service;
 
-import com.example.demo.model.Venue;
+import com.example.demo.dto.VenueDTO;
+
 import java.util.List;
 
 public interface VenueService {
-    List<Venue> getAllVenues();
-    Venue getVenueById(Long id);
+    List<VenueDTO> getAllVenues();
+    VenueDTO getVenueById(Long id);
+    VenueDTO addVenue(VenueDTO dto);
+    VenueDTO updateVenue(Long id, VenueDTO dto);
+    void deleteVenue(Long id);
 }

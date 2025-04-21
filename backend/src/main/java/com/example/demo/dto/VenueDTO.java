@@ -1,20 +1,16 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
-import jakarta.persistence.*;
-import lombok.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
+@Data
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class Venue {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+public class VenueDTO {
     private Long id;
-
     private String name;
     private String address;
     private int capacity;

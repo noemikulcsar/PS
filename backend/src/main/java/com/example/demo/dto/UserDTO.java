@@ -1,29 +1,20 @@
-package com.example.demo.model;
+package com.example.demo.dto;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.*;
+import com.example.demo.model.Ticket;
 import lombok.*;
 
 import java.util.List;
 
-@Entity
-@Builder
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
-public class User {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+@Builder
+public class UserDTO {
     private Long id;
-
     private String name;
     private String email;
     private String username;
-    private String password;
     private String phone;
     private String address;
     private String profilePictureUrl;
-
 }

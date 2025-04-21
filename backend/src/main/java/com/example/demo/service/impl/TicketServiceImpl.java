@@ -1,5 +1,7 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.TicketDTO;
+import com.example.demo.mapper.TicketMapper;
 import com.example.demo.model.Event;
 import com.example.demo.model.Ticket;
 import com.example.demo.model.User;
@@ -10,7 +12,6 @@ import com.example.demo.service.TicketService;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Optional;
 
 @Service
 public class TicketServiceImpl implements TicketService {
@@ -25,40 +26,48 @@ public class TicketServiceImpl implements TicketService {
     }
 
     @Override
-    public Ticket buyTicket(Long eventId, Long userId, String seatNumber) {
-        Event event = eventRepository.findById(eventId);
-        User user = userRepository.findById(userId);
+    public TicketDTO buyTicket(Long eventId, Long userId, String seatNumber) {
+        Event event = eventRepository.findById(eventId)
+                .orElseThrow(() -> new IllegalArgumentException("Event not found"));
+        User user = userRepository.findById(userId)
+                .orElseThrow(() -> new IllegalArgumentException("User not found"));
 
-        if (event == null || user == null) {
-            throw new IllegalArgumentException("Event or User not found");
+        int newSoldTickets = event.getSoldTickets() + 1;
+        event.setSoldTickets(newSoldTickets);
+
+        if (seatNumber == null || seatNumber.isBlank()) {
+            char rowLetter = (char) ('A' + ((newSoldTickets - 1) / 10));
+            int seatIndex = ((newSoldTickets - 1) % 10) + 1;
+            seatNumber = rowLetter + Integer.toString(seatIndex);
         }
 
-        Ticket ticket = new Ticket();
-        ticket.setId(System.currentTimeMillis());
-        ticket.setSeatNumber(seatNumber);
-        ticket.setPrice(event.getPrice());
-        ticket.setAvailable(false);
-        ticket.setEvent(event);
+        Ticket ticket = Ticket.builder()
+                .seatNumber(seatNumber)
+                .price(event.getPrice())
+                .event(event)
+                .user(user)
+                .build();
 
-        event.setSoldTickets(event.getSoldTickets() + 1);
         Ticket savedTicket = ticketRepository.save(ticket);
-        user.getTickets().add(savedTicket);
-        return savedTicket;
+        return TicketMapper.toDto(savedTicket);
+    }
+    @Override
+    public List<TicketDTO> getAllTickets() {
+        return ticketRepository.findAll()
+                .stream()
+                .map(TicketMapper::toDto)
+                .toList();
     }
 
     @Override
-    public List<Ticket> getAllTickets() {
-        return ticketRepository.findAll();
-    }
-
-    @Override
-    public Ticket getTicketById(Long id) {
-        return ticketRepository.findById(id);
+    public TicketDTO getTicketById(Long id) {
+        Ticket ticket = ticketRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Ticket not found with ID: " + id));
+        return TicketMapper.toDto(ticket);
     }
 
     @Override
     public void cancelTicket(Long id) {
         ticketRepository.deleteById(id);
     }
-
 }

@@ -1,31 +1,61 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.VenueDTO;
+import com.example.demo.mapper.VenueMapper;
 import com.example.demo.model.Venue;
+import com.example.demo.repository.VenueRepository;
 import com.example.demo.service.VenueService;
 import org.springframework.stereotype.Service;
 
-import java.util.Arrays;
 import java.util.List;
 
 @Service
 public class VenueServiceImpl implements VenueService {
-    private final List<Venue> venues = Arrays.asList(
-            new Venue(1L, "Teatrul Național", "Bd. Principal 123", 100, 46.770439, 23.591423),
-            new Venue(2L, "Opera Română", "Str. Muzicii 45", 70, 46.768224, 23.583485),
-            new Venue(3L, "Sala Palatului", "Calea Victoriei 60", 80, 44.439663, 26.096306),
-            new Venue(4L, "Teatrul de Comedie", "Str. Smârdan 10", 75, 44.432813, 26.104859)
-    );
+    private final VenueRepository venueRepository;
 
-    @Override
-    public List<Venue> getAllVenues() {
-        return venues;
+    public VenueServiceImpl(VenueRepository venueRepository) {
+        this.venueRepository = venueRepository;
     }
 
     @Override
-    public Venue getVenueById(Long id) {
-        return venues.stream()
-                .filter(venue -> venue.getId().equals(id))
-                .findFirst()
-                .orElse(null);
+    public List<VenueDTO> getAllVenues() {
+        return venueRepository.findAll()
+                .stream()
+                .map(VenueMapper::toDto)
+                .toList();
+    }
+
+    @Override
+    public VenueDTO getVenueById(Long id) {
+        Venue venue = venueRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Venue not found with ID: " + id));
+        return VenueMapper.toDto(venue);
+    }
+
+    @Override
+    public VenueDTO addVenue(VenueDTO dto) {
+        Venue venue = VenueMapper.toEntity(dto);
+        Venue saved = venueRepository.save(venue);
+        return VenueMapper.toDto(saved);
+    }
+
+    @Override
+    public VenueDTO updateVenue(Long id, VenueDTO dto) {
+        Venue existing = venueRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Venue not found with ID: " + id));
+
+        existing.setName(dto.getName());
+        existing.setAddress(dto.getAddress());
+        existing.setCapacity(dto.getCapacity());
+        existing.setLatitude(dto.getLatitude());
+        existing.setLongitude(dto.getLongitude());
+
+        Venue updated = venueRepository.save(existing);
+        return VenueMapper.toDto(updated);
+    }
+
+    @Override
+    public void deleteVenue(Long id) {
+        venueRepository.deleteById(id);
     }
 }
