@@ -1,15 +1,12 @@
-package com.example.demo.dto;
+package com.example.demo.dto.user;
 
-import com.example.demo.model.Ticket;
 import lombok.*;
 
-import java.util.List;
-
-@Data
-@AllArgsConstructor
+@Getter
+@Setter
 @NoArgsConstructor
-@Builder
-public class UserDTO {
+@AllArgsConstructor
+public class UserProfileDTO {
     private Long id;
     private String name;
     private String email;
@@ -18,3 +15,5 @@ public class UserDTO {
     private String address;
     private String profilePictureUrl;
 }
+
+

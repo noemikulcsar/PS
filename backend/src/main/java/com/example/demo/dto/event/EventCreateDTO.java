@@ -1,6 +1,5 @@
-package com.example.demo.dto;
+package com.example.demo.dto.event;
 
-import com.example.demo.model.Venue;
 import lombok.*;
 
 import java.time.LocalDate;
@@ -10,12 +9,11 @@ import java.time.LocalDate;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class EventDTO {
-    private Long id;
+public class EventCreateDTO {
     private String name;
     private String description;
     private LocalDate date;
-    private VenueDTO venue;
-    private int soldTickets;
     private int price;
+    private Long venueId;
 }
+

@@ -1,4 +1,4 @@
-package com.example.demo.dto;
+package com.example.demo.dto.venue;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -9,11 +9,9 @@ import lombok.NoArgsConstructor;
 @Builder
 @AllArgsConstructor
 @NoArgsConstructor
-public class VenueDTO {
+public class VenueMapDTO {
     private Long id;
     private String name;
-    private String address;
-    private int capacity;
     private double latitude;
     private double longitude;
 }

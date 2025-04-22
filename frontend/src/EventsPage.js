@@ -2,11 +2,10 @@ import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
 import './EventsPage.css';
-
+import './useWebSocket';
 function EventsPage() {
     const [events, setEvents] = useState([]);
     const [filteredEvents, setFilteredEvents] = useState([]);
-
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -14,6 +13,7 @@ function EventsPage() {
     const [locations, setLocations] = useState([]);
     const [onlyAvailable, setOnlyAvailable] = useState(false);
     const [sortOption, setSortOption] = useState('');
+    const [toastMessage, setToastMessage] = useState('');
 
     const navigate = useNavigate();
 
@@ -157,15 +157,15 @@ function EventsPage() {
             ) : (
                 <div className="event-list">
                     {filteredEvents.map((event) => {
-                        const soldOut = event.soldTickets >= event.venue.capacity;
+                        const soldOut = event.soldTickets >= (event.venue?.capacity ?? 0);
                         return (
                             <div key={event.id} className="event-card">
                                 <h3>{event.name}</h3>
                                 <p><strong>Description:</strong> {event.description}</p>
                                 <p><strong>Date:</strong> {event.date}</p>
-                                <p><strong>Location:</strong> {event.venue?.name} - {event.venue?.address}</p>
-                                <p><strong>Capacity:</strong> {event.venue?.capacity}</p>
-                                <p><strong>Available Tickets:</strong> {event.venue.capacity - event.soldTickets}</p>
+                                <p><strong>Location:</strong> {event.venue?.name ?? 'Unknown'} - {event.venue?.address ?? 'N/A'}</p>
+                                <p><strong>Capacity:</strong> {event.venue?.capacity ?? 'N/A'}</p>
+                                <p><strong>Available Tickets:</strong> {(event.venue?.capacity ?? 0) - event.soldTickets}</p>
                                 <p><strong>Price:</strong> {event.price} RON</p>
 
                                 {soldOut ? (

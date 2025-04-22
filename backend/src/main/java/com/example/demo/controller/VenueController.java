@@ -1,9 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.VenueDTO;
+import com.example.demo.dto.venue.VenueCreateDTO;
+import com.example.demo.dto.venue.VenueDTO;
 import com.example.demo.service.VenueService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +12,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/venues")
 @CrossOrigin(origins = "http://localhost:3000")
-@Tag(name = "Venues", description = "Operations related to venues")
+@Tag(name = "Venues", description = "Endpoints related to venues")
 public class VenueController {
 
     private final VenueService venueService;
@@ -32,12 +32,14 @@ public class VenueController {
     }
 
     @PostMapping
-    public ResponseEntity<VenueDTO> addVenue(@RequestBody VenueDTO dto) {
-        return new ResponseEntity<>(venueService.addVenue(dto), HttpStatus.CREATED);
+    public ResponseEntity<VenueDTO> addVenue(@RequestBody VenueCreateDTO dto) {
+        return ResponseEntity.ok(venueService.addVenue(dto));
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<VenueDTO> updateVenue(@PathVariable Long id, @RequestBody VenueDTO dto) {
+    public ResponseEntity<VenueDTO> updateVenue(
+            @PathVariable Long id,
+            @RequestBody VenueCreateDTO dto) {
         return ResponseEntity.ok(venueService.updateVenue(id, dto));
     }
 

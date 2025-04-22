@@ -1,21 +1,27 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.TicketDTO;
-import com.example.demo.dto.UserDTO;
-import com.example.demo.mapper.UserMapper;
-import com.example.demo.model.Ticket;
-import com.example.demo.model.User;
+import com.example.demo.dto.ticket.TicketDTO;
+import com.example.demo.dto.ticket.TicketDetailsDTO;
+import com.example.demo.dto.user.UserCreateDTO;
+import com.example.demo.dto.user.UserDTO;
+import com.example.demo.dto.user.UserProfileDTO;
 import com.example.demo.service.UserService;
-import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+import com.example.demo.dto.ticket.TicketCreateDTO;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.Map;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/users")
@@ -29,63 +35,43 @@ public class UserController {
         this.userService = userService;
     }
 
-    @Operation(summary = "Add a new user")
     @PostMapping
-    public User addUser(@RequestBody User user) {
-        return userService.addUser(user);
+    public ResponseEntity<UserDTO> addUser(@RequestBody UserCreateDTO dto) {
+        return ResponseEntity.ok(userService.addUser(dto));
     }
 
-    @Operation(summary = "Get all users (DTO)")
     @GetMapping
-    public List<UserDTO> getAllUsers() {
-        return userService.getAllUsers();
+    public ResponseEntity<List<UserDTO>> getAllUsers() {
+        return ResponseEntity.ok(userService.getAllUsers());
     }
 
-    @Operation(summary = "Update a specific user by ID")
-    @PutMapping("/{id}")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "User updated successfully"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
-    public UserDTO updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
-        updatedUser.setId(id);
-        User saved = userService.updateUser(updatedUser);
-        return UserMapper.toDto(saved);
-    }
-
-
-    @Operation(summary = "Delete a user by ID")
-    @DeleteMapping("/{id}")
-    public void deleteUser(@Parameter(description = "ID of the user") @PathVariable Long id) {
-        userService.deleteUser(id);
-    }
-
-    @Operation(summary = "Get a user by ID (DTO)")
     @GetMapping("/{id}")
-    public UserDTO getUserById(@Parameter(description = "ID of the user") @PathVariable Long id) {
-        return UserMapper.toDto(userService.getUserById(id));
+    public ResponseEntity<UserProfileDTO> getUserById(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserProfile(id));
     }
 
-    @Operation(summary = "Get all tickets associated with a user")
+    @PutMapping("/{id}")
+    public ResponseEntity<UserProfileDTO> updateUser(
+            @PathVariable Long id,
+            @RequestBody UserProfileDTO dto) {
+        return ResponseEntity.ok(userService.updateUser(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteUser(@PathVariable Long id) {
+        userService.deleteUser(id);
+        return ResponseEntity.noContent().build();
+    }
+
     @GetMapping("/{id}/tickets")
-    public List<TicketDTO> getUserTickets(@Parameter(description = "ID of the user") @PathVariable Long id) {
-        return userService.getUserTickets(id);
+    public ResponseEntity<List<TicketDetailsDTO>> getUserTickets(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserTickets(id));
     }
-
-    @Operation(summary = "Add a ticket to a user")
-    @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ticket added to user"),
-            @ApiResponse(responseCode = "404", description = "User not found")
-    })
     @PostMapping("/{id}/tickets")
-    public ResponseEntity<Ticket> addTicketToUser(
-            @Parameter(description = "ID of the user") @PathVariable Long id,
-            @RequestBody Ticket ticket) {
-        try {
-            Ticket addedTicket = userService.addTicketToUser(id, ticket);
-            return ResponseEntity.ok(addedTicket);
-        } catch (IllegalArgumentException e) {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+    public ResponseEntity<TicketDetailsDTO> addTicketToUser(
+            @PathVariable Long id,
+            @RequestBody TicketCreateDTO ticketDto) {
+        TicketDetailsDTO ticket = userService.addTicketToUser(id, ticketDto);
+        return ResponseEntity.ok(ticket);
     }
 }

@@ -24,7 +24,7 @@ function MapPage() {
     useEffect(() => {
         const fetchEvents = async () => {
             try {
-                const res = await axios.get('http://localhost:8080/events');
+                const res = await axios.get('http://localhost:8080/events/map');
                 const today = new Date();
                 const upcomingEvents = res.data.filter((event) => new Date(event.date) > today);
 

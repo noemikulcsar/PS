@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
-import com.example.demo.dto.VenueDTO;
+import com.example.demo.dto.venue.VenueDTO;
+import com.example.demo.dto.venue.VenueCreateDTO;
 import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.VenueMapper;
 import com.example.demo.model.Venue;
@@ -12,6 +13,7 @@ import java.util.List;
 
 @Service
 public class VenueServiceImpl implements VenueService {
+
     private final VenueRepository venueRepository;
 
     public VenueServiceImpl(VenueRepository venueRepository) {
@@ -34,14 +36,13 @@ public class VenueServiceImpl implements VenueService {
     }
 
     @Override
-    public VenueDTO addVenue(VenueDTO dto) {
-        Venue venue = VenueMapper.toEntity(dto);
-        Venue saved = venueRepository.save(venue);
-        return VenueMapper.toDto(saved);
+    public VenueDTO addVenue(VenueCreateDTO dto) {
+        Venue venue = VenueMapper.fromCreateDto(dto);
+        return VenueMapper.toDto(venueRepository.save(venue));
     }
 
     @Override
-    public VenueDTO updateVenue(Long id, VenueDTO dto) {
+    public VenueDTO updateVenue(Long id, VenueCreateDTO dto) {
         Venue existing = venueRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("Venue not found with ID: " + id));
 
@@ -51,8 +52,7 @@ public class VenueServiceImpl implements VenueService {
         existing.setLatitude(dto.getLatitude());
         existing.setLongitude(dto.getLongitude());
 
-        Venue updated = venueRepository.save(existing);
-        return VenueMapper.toDto(updated);
+        return VenueMapper.toDto(venueRepository.save(existing));
     }
 
     @Override

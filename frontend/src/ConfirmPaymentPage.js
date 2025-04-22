@@ -5,12 +5,16 @@ import bankIcon from './assets/bank-icon.png';
 import { jsPDF } from 'jspdf';
 import QRCode from 'qrcode';
 import './ConfirmPaymentPage.css';
+import './useWebSocket';
+import useWebSocket from "./useWebSocket";
 
 function ConfirmPaymentPage() {
     const location = useLocation();
     const navigate = useNavigate();
+    useWebSocket((notification) => {
+        alert(`🎟️ New ticket bought by ${notification.username} for ${notification.eventName}, seat ${notification.seatNumber}`);
+    });
     const { selectedEvent, cardData } = location.state || {};
-
     if (!selectedEvent || !cardData) {
         return <p className="text-center mt-4">Missing payment information.</p>;
     }
@@ -42,12 +46,14 @@ function ConfirmPaymentPage() {
 
         try {
             const ticketPayload = {
-                price: selectedEvent.price,
-                available: false,
-                event: selectedEvent
+                eventId: selectedEvent.id
             };
 
-            const response = await axios.post(`http://localhost:8080/users/${user.id}/tickets`, ticketPayload);
+
+            const response = await axios.post(`http://localhost:8080/users/${user.id}/tickets`, {
+                eventId: selectedEvent.id
+            });
+
             const savedTicket = response.data;
 
             await generatePDF(user, selectedEvent, savedTicket.seatNumber);
@@ -63,9 +69,11 @@ function ConfirmPaymentPage() {
             toast.style.borderRadius = '5px';
             toast.style.zIndex = '1000';
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 3000);
+            setTimeout(() => toast.remove(), 5000);
+            setTimeout(() => {
+                navigate('/events');
+            }, 1000);
 
-            navigate('/home');
         } catch (error) {
             console.error("Payment failed", error);
             alert("Payment failed.");
