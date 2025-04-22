@@ -25,6 +25,7 @@ function HomePage({ setUser }) {
                 <div className="navbar-menu">
                     <button className="nav-btn" onClick={() => navigate('/events')}>Events</button>
                     <button className="nav-btn" onClick={() => navigate("/tickets")}>Tickets</button>
+                    <button className="nav-btn" onClick={() => navigate('/favorites')}>Favorites</button>
                     <button className="nav-btn" onClick={() => navigate("/profile")}>Profile</button>
                     <button className="nav-btn" onClick={() => navigate("/map")}>View Map</button>
                     <button className="nav-btn logout" onClick={handleLogout}>Logout</button>

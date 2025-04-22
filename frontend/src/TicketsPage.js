@@ -7,7 +7,6 @@ import QRCode from 'qrcode';
 function TicketsPage() {
     const [tickets, setTickets] = useState([]);
     const [filteredTickets, setFilteredTickets] = useState([]);
-
     const [minPrice, setMinPrice] = useState('');
     const [maxPrice, setMaxPrice] = useState('');
     const [startDate, setStartDate] = useState('');
@@ -16,19 +15,18 @@ function TicketsPage() {
     const [sortOption, setSortOption] = useState('');
     const [visibleQrIndex, setVisibleQrIndex] = useState(null);
     const [qrCodes, setQrCodes] = useState({});
+    const [favoriteIds, setFavoriteIds] = useState([]);
 
     const navigate = useNavigate();
 
+    const user = JSON.parse(localStorage.getItem('user'));
+
     useEffect(() => {
         const fetchTickets = async () => {
-            const storedUser = JSON.parse(localStorage.getItem('user'));
-            if (!storedUser?.id) {
-                console.warn("User not found in localStorage");
-                return;
-            }
+            if (!user?.id) return;
 
             try {
-                const response = await axios.get(`http://localhost:8080/users/${storedUser.id}/tickets`);
+                const response = await axios.get(`http://localhost:8080/users/${user.id}/tickets`);
                 setTickets(response.data || []);
                 setFilteredTickets(response.data || []);
             } catch (error) {
@@ -36,11 +34,40 @@ function TicketsPage() {
             }
         };
 
+        const fetchFavorites = async () => {
+            try {
+                const response = await axios.get(`http://localhost:8080/users/${user.id}/favorites`);
+                setFavoriteIds(response.data.map(f => f.id)); // sau .eventId în funcție de DTO
+            } catch (error) {
+                console.error('Failed to fetch favorites:', error);
+            }
+        };
+
         fetchTickets();
-    }, []);
+        fetchFavorites();
+    }, [user?.id]);
+
+    const handleToggleFavorite = async (eventId) => {
+        if (!user) {
+            alert("Please login to manage favorites.");
+            return;
+        }
+
+        try {
+            if (favoriteIds.includes(eventId)) {
+                await axios.delete(`http://localhost:8080/users/${user.id}/favorites/${eventId}`);
+                setFavoriteIds(prev => prev.filter(id => id !== eventId));
+            } else {
+                await axios.post(`http://localhost:8080/users/${user.id}/favorites/${eventId}`);
+                setFavoriteIds(prev => [...prev, eventId]);
+            }
+        } catch (error) {
+            console.error("Error toggling favorite:", error);
+        }
+    };
 
     const handleFilter = () => {
-        let filtered = tickets.filter(ticket => {
+        const filtered = tickets.filter(ticket => {
             const price = ticket.price;
             const date = new Date(ticket.event?.date);
             const location = ticket.event?.venue?.name;
@@ -74,8 +101,8 @@ function TicketsPage() {
         setSortOption('');
         setFilteredTickets(tickets);
     };
+
     const generateQr = async (ticket, index) => {
-        const user = JSON.parse(localStorage.getItem('user'));
         const qrData = `Name: ${user.name}\nEvent: ${ticket.event.name}\nDate: ${ticket.event.date}\nSeat: ${ticket.seatNumber}`;
         try {
             const qrImage = await QRCode.toDataURL(qrData);
@@ -111,7 +138,7 @@ function TicketsPage() {
                 </div>
                 <div className="filter-group">
                     <label>Sort by:</label>
-                    <select value={sortOption} onChange={(e) => setSortOption(e.target.value)}>
+                    <select value={sortOption} onChange={e => setSortOption(e.target.value)}>
                         <option value="">None</option>
                         <option value="priceAsc">Price: Low to High</option>
                         <option value="priceDesc">Price: High to Low</option>
@@ -151,7 +178,24 @@ function TicketsPage() {
             ) : (
                 <div className="ticket-list">
                     {filteredTickets.map((ticket, index) => (
-                        <div key={ticket.id} className="ticket-card">
+                        <div key={ticket.id} className="ticket-card" style={{ position: 'relative' }}>
+                            {/* Favorite Star */}
+                            <span
+                                onClick={() => handleToggleFavorite(ticket.event.id)}
+                                style={{
+                                    position: 'absolute',
+                                    top: '10px',
+                                    right: '10px',
+                                    fontSize: '24px',
+                                    cursor: 'pointer',
+                                    color: favoriteIds.includes(ticket.event.id) ? '#FFD700' : '#ccc',
+                                    transition: 'color 0.2s ease'
+                                }}
+                                title={favoriteIds.includes(ticket.event.id) ? 'Remove from favorites' : 'Add to favorites'}
+                            >
+                                ★
+                            </span>
+
                             <h3>{ticket.event?.name || 'Unknown Event'}</h3>
                             <p><strong>Description:</strong> {ticket.event?.description || 'N/A'}</p>
                             <p><strong>Date:</strong> {ticket.event?.date || 'N/A'}</p>
@@ -160,7 +204,7 @@ function TicketsPage() {
                             <p><strong>Price:</strong> {ticket.price} RON</p>
 
                             <div className="ticket-actions">
-                            <button
+                                <button
                                     className="btn btn-outline-primary"
                                     onClick={() => navigate('/seat-map', { state: { ticket } })}
                                 >
@@ -185,9 +229,7 @@ function TicketsPage() {
                                         }
                                     }}
                                 >
-                                    <button className="btn btn-outline-success">
-                                        View QR Code
-                                    </button>
+                                    <button className="btn btn-outline-success">View QR Code</button>
                                     {visibleQrIndex === index && qrCodes[index] && (
                                         <div className="qr-floating-box">
                                             <img src={qrCodes[index]} alt="QR Code" />

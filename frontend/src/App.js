@@ -10,6 +10,8 @@ import 'leaflet/dist/leaflet.css';
 import MapPage from './MapPage';
 import SeatMapPage from './SeatMapPage';
 import ProfilePage from './ProfilePage'
+import FavoritesPage from './FavoritesPage';
+
 
 function App() {
     const [user, setUser] = useState(() => {
@@ -47,6 +49,7 @@ function App() {
                     path="/profile"
                     element={user ? <ProfilePage /> : <Navigate to="/login" />}
                 />
+                <Route path="/favorites" element={<FavoritesPage />} />
             </Routes>
         </Router>
     );

@@ -1,28 +1,19 @@
 package com.example.demo.controller;
 
-import com.example.demo.dto.ticket.TicketDTO;
 import com.example.demo.dto.ticket.TicketDetailsDTO;
 import com.example.demo.dto.user.UserCreateDTO;
 import com.example.demo.dto.user.UserDTO;
 import com.example.demo.dto.user.UserProfileDTO;
+import com.example.demo.model.Event;
+import com.example.demo.model.User;
 import com.example.demo.service.UserService;
 import io.swagger.v3.oas.annotations.tags.Tag;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.ticket.TicketCreateDTO;
-import org.springframework.web.multipart.MultipartFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardCopyOption;
 import java.util.List;
-import java.util.Map;
-import java.util.UUID;
-
+import com.example.demo.service.FavoriteEventService;
+import com.example.demo.repository.EventRepository;
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -30,9 +21,13 @@ import java.util.UUID;
 public class UserController {
 
     private final UserService userService;
+    private final FavoriteEventService favoriteEventService;
+    private final EventRepository eventRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, FavoriteEventService favoriteEventService, EventRepository eventRepository) {
         this.userService = userService;
+        this.favoriteEventService = favoriteEventService;
+        this.eventRepository = eventRepository;
     }
 
     @PostMapping
@@ -73,5 +68,33 @@ public class UserController {
             @RequestBody TicketCreateDTO ticketDto) {
         TicketDetailsDTO ticket = userService.addTicketToUser(id, ticketDto);
         return ResponseEntity.ok(ticket);
+    }
+    @PostMapping("/{userId}/favorites/{eventId}")
+    public ResponseEntity<?> addFavorite(@PathVariable Long userId, @PathVariable Long eventId) {
+        User user = userService.getUserById(userId);
+        Event event = eventRepository.findById(eventId).orElseThrow();
+        favoriteEventService.addFavorite(user, event);
+        return ResponseEntity.ok().build();
+    }
+
+    @DeleteMapping("/{userId}/favorites/{eventId}")
+    public ResponseEntity<?> removeFavorite(@PathVariable Long userId, @PathVariable Long eventId) {
+        User user = userService.getUserById(userId);
+        Event event = eventRepository.findById(eventId).orElseThrow();
+        favoriteEventService.removeFavorite(user, event);
+        return ResponseEntity.ok().build();
+    }
+
+    @GetMapping("/{userId}/favorites")
+    public ResponseEntity<List<Event>> getFavorites(@PathVariable Long userId) {
+        User user = userService.getUserById(userId);
+        return ResponseEntity.ok(favoriteEventService.getFavoritesForUser(user));
+    }
+
+    @GetMapping("/{userId}/favorites/{eventId}")
+    public ResponseEntity<Boolean> isFavorite(@PathVariable Long userId, @PathVariable Long eventId) {
+        User user = userService.getUserById(userId);
+        Event event = eventRepository.findById(eventId).orElseThrow();
+        return ResponseEntity.ok(favoriteEventService.isFavorite(user, event));
     }
 }

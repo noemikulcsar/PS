@@ -195,3 +195,17 @@ h2 {
 .button-group .btn:hover {
     background-color: #5a4bcf;
 }
+.btn-warning {
+    background-color: #ffc107;
+    color: black;
+    border: none;
+}
+
+.btn-outline-warning {
+    border: 1px solid #ffc107;
+    color: #ffc107;
+}
+.event-card span:hover {
+    transform: scale(1.1);
+}
+

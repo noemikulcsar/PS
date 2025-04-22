@@ -13,9 +13,8 @@ function EventsPage() {
     const [locations, setLocations] = useState([]);
     const [onlyAvailable, setOnlyAvailable] = useState(false);
     const [sortOption, setSortOption] = useState('');
-    const [toastMessage, setToastMessage] = useState('');
-
     const navigate = useNavigate();
+    const [favoriteIds, setFavoriteIds] = useState([]);
 
     useEffect(() => {
         const fetchEvents = async () => {
@@ -30,8 +29,21 @@ function EventsPage() {
             }
         };
 
+        const fetchFavorites = async () => {
+            const user = JSON.parse(localStorage.getItem('user'));
+            if (!user) return;
+            try {
+                const res = await axios.get(`http://localhost:8080/users/${user.id}/favorites`);
+                setFavoriteIds(res.data.map(event => event.id));
+            } catch (error) {
+                console.error("Failed to fetch favorites:", error);
+            }
+        };
+
         fetchEvents();
+        fetchFavorites();
     }, []);
+
 
     const handleBuyTicket = (event) => {
         navigate('/payment', { state: { selectedEvent: event } });
@@ -83,6 +95,25 @@ function EventsPage() {
     };
 
     const uniqueLocations = [...new Set(events.map(e => e.venue?.name).filter(Boolean))];
+    const handleToggleFavorite = async (eventId) => {
+        const user = JSON.parse(localStorage.getItem('user'));
+        if (!user) {
+            alert("You need to be logged in to manage favorites.");
+            return;
+        }
+
+        try {
+            if (favoriteIds.includes(eventId)) {
+                await axios.delete(`http://localhost:8080/users/${user.id}/favorites/${eventId}`);
+                setFavoriteIds(prev => prev.filter(id => id !== eventId));
+            } else {
+                await axios.post(`http://localhost:8080/users/${user.id}/favorites/${eventId}`);
+                setFavoriteIds(prev => [...prev, eventId]);
+            }
+        } catch (error) {
+            console.error("Failed to toggle favorite:", error);
+        }
+    };
 
     return (
         <div className="events-container">
@@ -159,7 +190,25 @@ function EventsPage() {
                     {filteredEvents.map((event) => {
                         const soldOut = event.soldTickets >= (event.venue?.capacity ?? 0);
                         return (
-                            <div key={event.id} className="event-card">
+                            <div key={event.id} className="event-card" style={{ position: 'relative' }}>
+                                {/* Favorite Star */}
+                                <span
+                                    onClick={() => handleToggleFavorite(event.id)}
+                                    style={{
+                                        position: 'absolute',
+                                        top: '10px',
+                                        right: '10px',
+                                        fontSize: '24px',
+                                        cursor: 'pointer',
+                                        color: favoriteIds.includes(event.id) ? '#FFD700' : '#ccc',
+                                        transition: 'color 0.2s ease'
+                                    }}
+                                    title={favoriteIds.includes(event.id) ? 'Remove from favorites' : 'Add to favorites'}
+                                >
+        ★
+    </span>
+
+                                {/* Rest of the event card content */}
                                 <h3>{event.name}</h3>
                                 <p><strong>Description:</strong> {event.description}</p>
                                 <p><strong>Date:</strong> {event.date}</p>

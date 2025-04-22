@@ -49,11 +49,7 @@ function ConfirmPaymentPage() {
                 eventId: selectedEvent.id
             };
 
-
-            const response = await axios.post(`http://localhost:8080/users/${user.id}/tickets`, {
-                eventId: selectedEvent.id
-            });
-
+            const response = await axios.post(`http://localhost:8080/users/${user.id}/tickets`, ticketPayload);
             const savedTicket = response.data;
 
             await generatePDF(user, selectedEvent, savedTicket.seatNumber);
@@ -69,10 +65,11 @@ function ConfirmPaymentPage() {
             toast.style.borderRadius = '5px';
             toast.style.zIndex = '1000';
             document.body.appendChild(toast);
-            setTimeout(() => toast.remove(), 5000);
+
             setTimeout(() => {
-                navigate('/events');
-            }, 1000);
+                toast.remove();
+                navigate("/home", { replace: true });  // 🔄 înlocuiește pagina curentă
+            }, 1500);  // Dă timp toastului să fie vizibil
 
         } catch (error) {
             console.error("Payment failed", error);
