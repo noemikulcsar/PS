@@ -1,6 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.VenueDTO;
+import com.example.demo.exception.ResourceNotFoundException;
 import com.example.demo.mapper.VenueMapper;
 import com.example.demo.model.Venue;
 import com.example.demo.repository.VenueRepository;
@@ -28,7 +29,7 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public VenueDTO getVenueById(Long id) {
         Venue venue = venueRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Venue not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Venue not found with ID: " + id));
         return VenueMapper.toDto(venue);
     }
 
@@ -42,7 +43,7 @@ public class VenueServiceImpl implements VenueService {
     @Override
     public VenueDTO updateVenue(Long id, VenueDTO dto) {
         Venue existing = venueRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Venue not found with ID: " + id));
+                .orElseThrow(() -> new ResourceNotFoundException("Venue not found with ID: " + id));
 
         existing.setName(dto.getName());
         existing.setAddress(dto.getAddress());
@@ -56,6 +57,9 @@ public class VenueServiceImpl implements VenueService {
 
     @Override
     public void deleteVenue(Long id) {
+        if (!venueRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Venue not found with ID: " + id);
+        }
         venueRepository.deleteById(id);
     }
 }

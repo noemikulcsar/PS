@@ -18,7 +18,7 @@ function ProfilePage() {
         const storedUser = JSON.parse(localStorage.getItem('user'));
         if (storedUser) {
             setUser(storedUser);
-            setFormData(storedUser);
+            setFormData({ ...storedUser }); // copie defensivă
         }
     }, []);
 
@@ -27,9 +27,22 @@ function ProfilePage() {
         setFormData(prev => ({ ...prev, [name]: value }));
     };
 
-    const handleSave = () => {
-        setUser(formData);
-        localStorage.setItem('user', JSON.stringify(formData));
+    const handleSave = async () => {
+        try {
+            const response = await axios.put(`http://localhost:8080/users/${formData.id}`, formData);
+            const updatedUser = response.data;
+            setUser(updatedUser);
+            setFormData(updatedUser);
+            localStorage.setItem('user', JSON.stringify(updatedUser));
+            setIsEditing(false);
+        } catch (error) {
+            console.error("Error updating user:", error);
+            alert("Failed to save profile changes.");
+        }
+    };
+
+    const handleCancel = () => {
+        setFormData({ ...user }); // resetează la valorile originale
         setIsEditing(false);
     };
 
@@ -48,17 +61,17 @@ function ProfilePage() {
                 <div className="profile-details">
                     <label>Name:</label>
                     {isEditing ? (
-                        <input type="text" name="name" value={formData.name} onChange={handleChange} />
+                        <input type="text" name="name" value={formData.name || ''} onChange={handleChange} />
                     ) : <p>{user.name}</p>}
 
                     <label>Email:</label>
                     {isEditing ? (
-                        <input type="email" name="email" value={formData.email} onChange={handleChange} />
+                        <input type="email" name="email" value={formData.email || ''} onChange={handleChange} />
                     ) : <p>{user.email}</p>}
 
                     <label>Username:</label>
                     {isEditing ? (
-                        <input type="text" name="username" value={formData.username} onChange={handleChange} />
+                        <input type="text" name="username" value={formData.username || ''} onChange={handleChange} />
                     ) : <p>{user.username}</p>}
 
                     <label>Phone:</label>
@@ -75,7 +88,7 @@ function ProfilePage() {
                         {isEditing ? (
                             <>
                                 <button className="btn btn-success" onClick={handleSave}>Save</button>
-                                <button className="btn btn-secondary" onClick={() => setIsEditing(false)}>Cancel</button>
+                                <button className="btn btn-secondary" onClick={handleCancel}>Cancel</button>
                             </>
                         ) : (
                             <button className="btn btn-primary" onClick={() => setIsEditing(true)}>Edit Profile</button>

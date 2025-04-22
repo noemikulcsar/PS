@@ -41,33 +41,18 @@ public class UserController {
         return userService.getAllUsers();
     }
 
-    @Operation(summary = "Update user information")
-    @PutMapping
-    public User updateUser(@RequestBody User user) {
-        return userService.updateUser(user);
-    }
-
     @Operation(summary = "Update a specific user by ID")
     @PutMapping("/{id}")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "User updated successfully"),
             @ApiResponse(responseCode = "404", description = "User not found")
     })
-    public UserDTO updateUser(
-            @Parameter(description = "ID of the user") @PathVariable Long id,
-            @RequestBody User updatedUser) {
-
-        User user = userService.getUserById(id);
-        if (user == null) throw new RuntimeException("User not found");
-
-        user.setName(updatedUser.getName());
-        user.setEmail(updatedUser.getEmail());
-        user.setPhone(updatedUser.getPhone());
-        user.setAddress(updatedUser.getAddress());
-        user.setProfilePictureUrl(updatedUser.getProfilePictureUrl());
-
-        return UserMapper.toDto(user);
+    public UserDTO updateUser(@PathVariable Long id, @RequestBody User updatedUser) {
+        updatedUser.setId(id);
+        User saved = userService.updateUser(updatedUser);
+        return UserMapper.toDto(saved);
     }
+
 
     @Operation(summary = "Delete a user by ID")
     @DeleteMapping("/{id}")

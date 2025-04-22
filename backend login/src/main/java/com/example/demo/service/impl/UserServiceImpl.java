@@ -1,7 +1,7 @@
-
 package com.example.demo.service.impl;
 
 import com.example.demo.dto.UserDTO;
+import com.example.demo.exception.UserNotFoundException;
 import com.example.demo.mapper.UserMapper;
 import com.example.demo.model.User;
 import com.example.demo.repository.UserRepository;
@@ -28,7 +28,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public User getUserById(Long id) {
         return userRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("User not found with ID: " + id));
+                .orElseThrow(() -> new UserNotFoundException("User not found with ID: " + id));
     }
 
     @Override
@@ -36,13 +36,14 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll().stream()
                 .filter(user -> user.getUsername().equals(username) && user.getPassword().equals(password))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new UserNotFoundException("Invalid username or password"));
     }
+
     @Override
     public User findByUsername(String username) {
         return userRepository.findAll().stream()
                 .filter(user -> user.getUsername().equals(username))
                 .findFirst()
-                .orElse(null);
+                .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
     }
 }
