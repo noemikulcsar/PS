@@ -93,6 +93,19 @@ function EventsPage() {
         setSortOption('');
         setFilteredEvents(events);
     };
+    const calculateEventProgress = (eventDateStr) => {
+        const now = new Date();
+        const eventDate = new Date(eventDateStr);
+
+        const startReference = new Date(eventDate);
+        startReference.setDate(eventDate.getDate() - 100);
+
+        const totalDuration = eventDate - startReference;
+        const timeElapsed = now - startReference;
+
+        const progress = 100 - (timeElapsed / totalDuration) * 100;
+        return Math.max(0, Math.min(progress, 100));
+    };
 
     const uniqueLocations = [...new Set(events.map(e => e.venue?.name).filter(Boolean))];
     const handleToggleFavorite = async (eventId) => {
@@ -205,10 +218,10 @@ function EventsPage() {
                                     }}
                                     title={favoriteIds.includes(event.id) ? 'Remove from favorites' : 'Add to favorites'}
                                 >
-        ★
-    </span>
+            ★
+        </span>
 
-                                {/* Rest of the event card content */}
+                                {/* Event Info */}
                                 <h3>{event.name}</h3>
                                 <p><strong>Description:</strong> {event.description}</p>
                                 <p><strong>Date:</strong> {event.date}</p>
@@ -216,6 +229,20 @@ function EventsPage() {
                                 <p><strong>Capacity:</strong> {event.venue?.capacity ?? 'N/A'}</p>
                                 <p><strong>Available Tickets:</strong> {(event.venue?.capacity ?? 0) - event.soldTickets}</p>
                                 <p><strong>Price:</strong> {event.price} RON</p>
+                                {/* Progress bar for events */}
+                                {event.date && (
+                                    <div className="progress-wrapper mt-2">
+                                        <div className="progress-bar-bg">
+                                            <div
+                                                className="progress-bar-fill"
+                                                style={{ width: `${calculateEventProgress(event.date)}%` }}
+                                            ></div>
+                                        </div>
+                                        <small style={{ fontSize: "0.75rem", color: "#666" }}>
+                                            {Math.max(0, Math.ceil((new Date(event.date) - new Date()) / (1000 * 60 * 60 * 24)))} zile rămase
+                                        </small>
+                                    </div>
+                                )}
 
                                 {soldOut ? (
                                     <p style={{ color: 'red', fontWeight: 'bold' }}>Sold Out</p>

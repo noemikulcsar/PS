@@ -208,4 +208,26 @@ h2 {
 .event-card span:hover {
     transform: scale(1.1);
 }
+.progress-wrapper {
+    margin-top: 5px;
+}
+
+.progress-bar-bg {
+    background-color: #ddd;
+    height: 8px;
+    border-radius: 4px;
+    overflow: hidden;
+}
+
+.progress-bar-fill {
+    background-color: #007bff;
+    height: 100%;
+    transition: width 0.5s ease;
+}
+.progress-container {
+    background-color: #e0e0e0;
+    border-radius: 4px;
+    overflow: hidden;
+    margin-top: 8px;
+}
 

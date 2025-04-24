@@ -7,6 +7,7 @@ import QRCode from 'qrcode';
 import './ConfirmPaymentPage.css';
 import './useWebSocket';
 import useWebSocket from "./useWebSocket";
+import confetti from 'canvas-confetti';
 
 function ConfirmPaymentPage() {
     const location = useLocation();
@@ -18,7 +19,29 @@ function ConfirmPaymentPage() {
     if (!selectedEvent || !cardData) {
         return <p className="text-center mt-4">Missing payment information.</p>;
     }
+    const launchConfetti = () => {
+        const duration = 3 * 1000;
+        const end = Date.now() + duration;
 
+        (function frame() {
+            confetti({
+                particleCount: 5,
+                angle: 60,
+                spread: 55,
+                origin: { x: 0 },
+            });
+            confetti({
+                particleCount: 5,
+                angle: 120,
+                spread: 55,
+                origin: { x: 1 },
+            });
+
+            if (Date.now() < end) {
+                requestAnimationFrame(frame);
+            }
+        })();
+    };
     const generatePDF = async (user, event, seatNumber) => {
         const doc = new jsPDF();
         const qrData = `Name: ${user.name}\nEvent: ${event.name}\nDate: ${event.date}\nSeat: ${seatNumber}`;
@@ -53,6 +76,7 @@ function ConfirmPaymentPage() {
             const savedTicket = response.data;
 
             await generatePDF(user, selectedEvent, savedTicket.seatNumber);
+            launchConfetti();
 
             const toast = document.createElement('div');
             toast.innerText = "✅ Payment successful!";
