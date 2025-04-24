@@ -11,7 +11,7 @@ import MapPage from './MapPage';
 import SeatMapPage from './SeatMapPage';
 import ProfilePage from './ProfilePage'
 import FavoritesPage from './FavoritesPage';
-
+import CalendarPage from './CalendarPage';
 
 function App() {
     const [user, setUser] = useState(() => {
@@ -50,6 +50,7 @@ function App() {
                     element={user ? <ProfilePage /> : <Navigate to="/login" />}
                 />
                 <Route path="/favorites" element={<FavoritesPage />} />
+                <Route path="/calendar" element={user ? <CalendarPage /> : <Navigate to="/login" />} />
             </Routes>
         </Router>
     );
