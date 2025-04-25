@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.dto.UserDTO;
 import com.example.demo.model.User;
+import com.example.demo.repository.UserRepository;
 import com.example.demo.service.UserService;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -15,9 +16,11 @@ import java.util.List;
 @CrossOrigin(origins = "http://localhost:3000")
 public class UserController {
     private final UserService userService;
+    private final UserRepository userRepository;
 
-    public UserController(UserService userService) {
+    public UserController(UserService userService, UserRepository userRepository) {
         this.userService = userService;
+        this.userRepository = userRepository;
     }
 
     @GetMapping
@@ -36,14 +39,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
     }
     @PostMapping("/register")
-    public ResponseEntity<?> register(@RequestBody User newUser) {
-        try {
-            User registeredUser = userService.registerUser(newUser);
-            return ResponseEntity.ok(registeredUser);
-        } catch (RuntimeException e) {
-            return ResponseEntity
-                    .badRequest()
-                    .body(e.getMessage());
+    public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
+        if (userRepository.existsByUsername(user.getUsername())) {
+            throw new RuntimeException("Username already taken");
         }
+        return ResponseEntity.ok(userRepository.save(user));
     }
 }

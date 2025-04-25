@@ -119,9 +119,4 @@ public class UserController {
         List<TicketDetailsDTO> tickets = userService.getUserTickets(userId);
         return ResponseEntity.ok(new TicketListXmlWrapper(tickets));
     }
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> registerUser(@Valid @RequestBody UserCreateDTO dto) {
-        UserDTO savedUser = userService.addUser(dto);
-        return ResponseEntity.ok(savedUser);
-    }
 }

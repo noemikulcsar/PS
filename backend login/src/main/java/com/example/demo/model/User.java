@@ -21,6 +21,7 @@ public class User {
     private Long id;
 
     @NotBlank(message = "Name is required")
+    @Size(min=4, message = "Name must be at least 4 characters")
     private String name;
 
     @NotBlank(message = "Email is required")
@@ -36,6 +37,8 @@ public class User {
     @Size(min = 4, message = "Password must be at least 4 characters")
     private String password;
 
+    @NotBlank(message = "Telephone is required")
+    @Size(min = 10, message = "Telephone must be at least 10 characters")
     private String phone;
 
     private String address;

@@ -4,15 +4,20 @@ import com.example.demo.annotations.UniqueUsername;
 import com.example.demo.repository.UserRepository;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
-import org.springframework.beans.factory.annotation.Autowired;
 
 public class UniqueUsernameValidator implements ConstraintValidator<UniqueUsername, String> {
 
-    @Autowired
-    private UserRepository userRepository;
+    private static UserRepository userRepository;
+
+    public static void setUserRepository(UserRepository repo) {
+        userRepository = repo;
+    }
 
     @Override
     public boolean isValid(String username, ConstraintValidatorContext context) {
-        return username != null && !userRepository.existsByUsername(username);
+        if (username == null || userRepository == null) {
+            return true; // valid by default
+        }
+        return !userRepository.existsByUsername(username);
     }
 }
