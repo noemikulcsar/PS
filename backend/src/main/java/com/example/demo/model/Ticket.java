@@ -1,6 +1,8 @@
 package com.example.demo.model;
 
 import jakarta.persistence.*;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
 import lombok.*;
 
 @Entity
@@ -15,7 +17,10 @@ public class Ticket {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Seat number is required")
     private String seatNumber;
+
+    @Min(value = 1, message = "Price must be positive")
     private int price;
 
     @ManyToOne
@@ -26,3 +31,4 @@ public class Ticket {
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 }
+

@@ -33,10 +33,24 @@ function ProfilePage() {
         setSelectedFile(e.target.files[0]);
     };
 
+    const validateProfile = () => {
+        if (!formData.name || formData.name.length < 3) return "Name must be at least 3 characters.";
+        if (!formData.email || !/\S+@\S+\.\S+/.test(formData.email)) return "Please enter a valid email.";
+        if (!formData.username || formData.username.length < 3) return "Username must be at least 3 characters.";
+        if (formData.phone && !/^\d{9,15}$/.test(formData.phone)) return "Phone must contain only digits (9-15).";
+        if (!formData.address || formData.address.length < 5) return "Address must be at least 5 characters.";
+        return null;
+    };
+
     const handleSave = async () => {
+        const errorMsg = validateProfile();
+        if (errorMsg) {
+            alert(errorMsg);
+            return;
+        }
+
         try {
             let profilePictureUrl = formData.profilePictureUrl;
-
             if (selectedFile) {
                 const uploadData = new FormData();
                 uploadData.append("file", selectedFile);
@@ -48,7 +62,6 @@ function ProfilePage() {
             }
 
             const updatedFormData = { ...formData, profilePictureUrl };
-            console.log("Payload trimis către backend:", updatedFormData);
             const response = await axios.put(`http://localhost:8080/users/${user.id}`, updatedFormData);
 
             const updatedUser = { ...response.data, id: user.id };

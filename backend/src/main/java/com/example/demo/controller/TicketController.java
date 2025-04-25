@@ -4,6 +4,7 @@ import com.example.demo.dto.ticket.TicketDTO;
 import com.example.demo.dto.ticket.TicketDetailsDTO;
 import com.example.demo.service.TicketService;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -33,11 +34,13 @@ public class TicketController {
 
     @PostMapping("/buy")
     public ResponseEntity<TicketDetailsDTO> buyTicket(
-            @RequestParam Long eventId,
-            @RequestParam Long userId,
-            @RequestParam String seatNumber
+            @Valid @RequestBody TicketDetailsDTO request
     ) {
-        return ResponseEntity.ok(ticketService.buyTicket(eventId, userId, seatNumber));
+        return ResponseEntity.ok(ticketService.buyTicket(
+                request.getEvent().getId(),
+                request.getUser().getId(),
+                request.getSeatNumber()
+        ));
     }
 
     @DeleteMapping("/{id}")

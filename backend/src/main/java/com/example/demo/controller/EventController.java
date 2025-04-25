@@ -4,12 +4,18 @@ import com.example.demo.dto.event.EventCreateDTO;
 import com.example.demo.dto.event.EventDTO;
 import com.example.demo.dto.event.EventDetailsDTO;
 import com.example.demo.dto.event.EventMapDTO;
+import com.example.demo.mapper.EventMapper;
 import com.example.demo.service.EventService;
+import com.example.demo.strategy.CombinedFilterStrategy;
+import com.example.demo.strategy.EventFilterCriteria;
+import com.example.demo.strategy.FilterContext;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/events")
@@ -34,8 +40,9 @@ public class EventController {
     }
 
     @PostMapping("/create")
-    public ResponseEntity<EventDetailsDTO> createEvent(@RequestBody EventCreateDTO dto) {
-        return ResponseEntity.ok(eventService.addEvent(dto));
+    public ResponseEntity<EventDetailsDTO> createEvent(@Valid @RequestBody EventCreateDTO dto) {
+        EventDetailsDTO savedEvent = eventService.addEvent(dto);
+        return ResponseEntity.ok(savedEvent);
     }
 
     @PostMapping("/update/{id}")
@@ -52,5 +59,11 @@ public class EventController {
     public ResponseEntity<List<EventMapDTO>> getEventsForMap() {
         return ResponseEntity.ok(eventService.getEventsForMap());
     }
-
+    @PostMapping("/filter")
+    public ResponseEntity<List<EventDetailsDTO>> getFilteredEvents(@RequestBody EventFilterCriteria criteria) {
+        List<EventDetailsDTO> allEvents = eventService.getAllEventDetails();
+        FilterContext context = new FilterContext(new CombinedFilterStrategy());
+        List<EventDetailsDTO> filtered = context.filter(allEvents, criteria);
+        return ResponseEntity.ok(filtered);
+    }
 }

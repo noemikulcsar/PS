@@ -6,7 +6,9 @@ import lombok.*;
 import org.springframework.format.annotation.DateTimeFormat;
 
 import java.time.LocalDate;
-import java.util.List;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.Min;
 
 @Entity
 @Builder
@@ -20,9 +22,13 @@ public class Event {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @NotBlank(message = "Event name is required")
     private String name;
+
+    @NotBlank(message = "Description is required")
     private String description;
 
+    @NotNull(message = "Event date is required")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
     private LocalDate date;
 
@@ -30,6 +36,9 @@ public class Event {
     @JoinColumn(name = "venue_id", nullable = false)
     private Venue venue;
 
+    @Min(value = 0, message = "Sold tickets cannot be negative")
     private int soldTickets;
+
+    @Min(value = 1, message = "Price must be positive")
     private int price;
 }

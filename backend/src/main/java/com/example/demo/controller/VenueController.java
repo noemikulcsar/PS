@@ -8,6 +8,8 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import jakarta.validation.Valid;
+
 
 @RestController
 @RequestMapping("/venues")
@@ -32,7 +34,7 @@ public class VenueController {
     }
 
     @PostMapping
-    public ResponseEntity<VenueDTO> addVenue(@RequestBody VenueCreateDTO dto) {
+    public ResponseEntity<VenueDTO> addVenue(@Valid @RequestBody VenueCreateDTO dto) {
         return ResponseEntity.ok(venueService.addVenue(dto));
     }
 

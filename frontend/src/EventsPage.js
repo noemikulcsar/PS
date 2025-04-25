@@ -49,38 +49,35 @@ function EventsPage() {
         navigate('/payment', { state: { selectedEvent: event } });
     };
 
-    const handleFilter = () => {
-        let filtered = events.filter(event => {
-            const price = event.price;
-            const eventDate = new Date(event.date);
-            const matchesPrice =
-                (!minPrice || price >= minPrice) &&
-                (!maxPrice || price <= maxPrice);
+    const handleFilter = async () => {
+        try {
+            const response = await axios.post("http://localhost:8080/events/filter", {
+                minPrice: minPrice !== '' ? parseInt(minPrice) : null,
+                maxPrice: maxPrice !== '' ? parseInt(maxPrice) : null,
+                startDate: startDate !== '' ? startDate : null,
+                endDate: endDate !== '' ? endDate : null,
+                locations: locations.length > 0 ? locations : null,
+                onlyAvailable: onlyAvailable,
+                sortOption: sortOption !== '' ? sortOption : null,
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
+            const today = new Date();
+            today.setHours(0, 0, 0, 0);
 
-            const matchesDate =
-                (!startDate || eventDate >= new Date(startDate)) &&
-                (!endDate || eventDate <= new Date(endDate));
+            const upcoming = response.data.filter(event => {
+                const eventDate = new Date(event.date);
+                eventDate.setHours(0, 0, 0, 0);
+                return eventDate >= today;
+            });
 
-            const matchesLocation =
-                locations.length === 0 || locations.includes(event.venue?.name);
-
-            const matchesAvailability =
-                !onlyAvailable || (event.venue?.capacity > event.soldTickets);
-
-            return matchesPrice && matchesDate && matchesLocation && matchesAvailability;
-        });
-
-        if (sortOption === 'priceAsc') {
-            filtered.sort((a, b) => a.price - b.price);
-        } else if (sortOption === 'priceDesc') {
-            filtered.sort((a, b) => b.price - a.price);
-        } else if (sortOption === 'dateAsc') {
-            filtered.sort((a, b) => new Date(a.date) - new Date(b.date));
-        } else if (sortOption === 'dateDesc') {
-            filtered.sort((a, b) => new Date(b.date) - new Date(a.date));
+            setFilteredEvents(upcoming);
+        } catch (error) {
+            console.error("Eroare la filtrarea evenimentelor:", error);
+            alert("A apărut o eroare la filtrare. Verifică consola.");
         }
-
-        setFilteredEvents(filtered);
     };
 
     const handleReset = () => {

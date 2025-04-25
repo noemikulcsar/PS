@@ -46,4 +46,11 @@ public class UserServiceImpl implements UserService {
                 .findFirst()
                 .orElseThrow(() -> new UserNotFoundException("User not found with username: " + username));
     }
+    @Override
+    public User registerUser(User newUser) {
+        if (userRepository.existsByUsername(newUser.getUsername())) {
+            throw new RuntimeException("Username already taken");
+        }
+        return userRepository.save(newUser);
+    }
 }

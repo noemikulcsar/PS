@@ -4,16 +4,23 @@ import com.example.demo.dto.ticket.TicketDetailsDTO;
 import com.example.demo.dto.user.UserCreateDTO;
 import com.example.demo.dto.user.UserDTO;
 import com.example.demo.dto.user.UserProfileDTO;
+import com.example.demo.export.TicketListXmlWrapper;
 import com.example.demo.model.Event;
 import com.example.demo.model.User;
 import com.example.demo.service.UserService;
+import com.example.demo.strategy.BasicTicketFilterStrategy;
+import com.example.demo.strategy.TicketFilterCriteria;
+import com.example.demo.strategy.TicketFilterStrategy;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import com.example.demo.dto.ticket.TicketCreateDTO;
 import java.util.List;
 import com.example.demo.service.FavoriteEventService;
 import com.example.demo.repository.EventRepository;
+import jakarta.validation.Valid;
+
 @RestController
 @RequestMapping("/users")
 @CrossOrigin(origins = "http://localhost:3000")
@@ -96,5 +103,25 @@ public class UserController {
         User user = userService.getUserById(userId);
         Event event = eventRepository.findById(eventId).orElseThrow();
         return ResponseEntity.ok(favoriteEventService.isFavorite(user, event));
+    }
+    @PostMapping("/{userId}/tickets/filter")
+    public ResponseEntity<List<TicketDetailsDTO>> filterTickets(
+            @PathVariable Long userId,
+            @RequestBody TicketFilterCriteria criteria) {
+
+        List<TicketDetailsDTO> allTickets = userService.getUserTickets(userId);
+        TicketFilterStrategy strategy = new BasicTicketFilterStrategy();
+        List<TicketDetailsDTO> filtered = strategy.filter(allTickets, criteria);
+        return ResponseEntity.ok(filtered);
+    }
+    @GetMapping(value = "/{userId}/tickets/xml", produces = MediaType.APPLICATION_XML_VALUE)
+    public ResponseEntity<TicketListXmlWrapper> exportTicketsToXml(@PathVariable Long userId) {
+        List<TicketDetailsDTO> tickets = userService.getUserTickets(userId);
+        return ResponseEntity.ok(new TicketListXmlWrapper(tickets));
+    }
+    @PostMapping("/register")
+    public ResponseEntity<UserDTO> registerUser(@Valid @RequestBody UserCreateDTO dto) {
+        UserDTO savedUser = userService.addUser(dto);
+        return ResponseEntity.ok(savedUser);
     }
 }

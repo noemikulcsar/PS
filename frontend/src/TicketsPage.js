@@ -66,31 +66,27 @@ function TicketsPage() {
         }
     };
 
-    const handleFilter = () => {
-        const filtered = tickets.filter(ticket => {
-            const price = ticket.price;
-            const date = new Date(ticket.event?.date);
-            const location = ticket.event?.venue?.name;
+    const handleFilter = async () => {
+        try {
+            const response = await axios.post(`http://localhost:8080/users/${user.id}/tickets/filter`, {
+                minPrice: minPrice !== '' ? parseInt(minPrice) : null,
+                maxPrice: maxPrice !== '' ? parseInt(maxPrice) : null,
+                startDate: startDate !== '' ? startDate : null,
+                endDate: endDate !== '' ? endDate : null,
+                locations: locations.length > 0 ? locations : null,
+                sortOption: sortOption !== '' ? sortOption : null,
+            }, {
+                headers: {
+                    "Content-Type": "application/json"
+                }
+            });
 
-            const matchesPrice = (!minPrice || price >= minPrice) && (!maxPrice || price <= maxPrice);
-            const matchesDate = (!startDate || date >= new Date(startDate)) && (!endDate || date <= new Date(endDate));
-            const matchesLocation = locations.length === 0 || locations.includes(location);
-
-            return matchesPrice && matchesDate && matchesLocation;
-        });
-
-        if (sortOption === 'priceAsc') {
-            filtered.sort((a, b) => a.price - b.price);
-        } else if (sortOption === 'priceDesc') {
-            filtered.sort((a, b) => b.price - a.price);
-        } else if (sortOption === 'dateAsc') {
-            filtered.sort((a, b) => new Date(a.event.date) - new Date(b.event.date));
-        } else if (sortOption === 'dateDesc') {
-            filtered.sort((a, b) => new Date(b.event.date) - new Date(a.event.date));
+            setFilteredTickets(response.data);
+        } catch (error) {
+            console.error("Eroare la filtrarea biletelor:", error);
         }
-
-        setFilteredTickets(filtered);
     };
+
 
     const handleReset = () => {
         setMinPrice('');
@@ -115,9 +111,37 @@ function TicketsPage() {
 
     const uniqueLocations = [...new Set(tickets.map(t => t.event?.venue?.name).filter(Boolean))];
 
+    const downloadXml = async () => {
+        if (!user?.id) return;
+        try {
+            const response = await axios.get(`http://localhost:8080/users/${user.id}/tickets/xml`, {
+                headers: { 'Accept': 'application/xml' },
+                responseType: 'blob'
+            });
+            const blob = new Blob([response.data], { type: 'application/xml' });
+            const url = window.URL.createObjectURL(blob);
+            const link = document.createElement('a');
+
+            link.href = url;
+            link.download = `tickets_user_${user.username}.xml`;
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+            window.URL.revokeObjectURL(url);
+        } catch (error) {
+            console.error("Eroare la descărcarea XML:", error);
+            alert("Nu s-a putut descărca fișierul XML.");
+        }
+    };
+
     return (
         <div className="tickets-container">
-            <h2 className="text-center mb-4">My Tickets</h2>
+            <div className="d-flex justify-content-between align-items-center mb-4">
+                <h2 className="mb-0">My Tickets</h2>
+                <button className="btn btn-outline-info" onClick={downloadXml}>
+                    Export Tickets (XML)
+                </button>
+            </div>
 
             <div className="filter-section">
                 <div className="filter-group">

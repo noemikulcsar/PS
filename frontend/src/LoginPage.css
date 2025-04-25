@@ -47,3 +47,13 @@
 .login-container button:hover {
     background-color: #3d42aa;
 }
+.register-input {
+    display: block;
+    width: 100%;
+    margin: 10px 0;
+    padding: 10px;
+    font-size: 1rem;
+    border: 1px solid #ccc;
+    border-radius: 4px;
+    box-sizing: border-box;
+}

@@ -10,4 +10,5 @@ public interface UserService {
     User getUserById(Long id);
     User findByUsername(String username);
     User authenticate(String username, String password);
+    User registerUser(User newUser);
 }
