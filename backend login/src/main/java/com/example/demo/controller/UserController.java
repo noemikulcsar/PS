@@ -29,14 +29,14 @@ public class UserController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<User> login(@RequestBody User loginUser) {
-        User user = userService.findByUsername(loginUser.getUsername());
+    public ResponseEntity<?> login(@RequestBody User loginUser) {
+        User user = userService.findByUsernameOrThrow(loginUser.getUsername());
 
-        if (user != null && user.getPassword().equals(loginUser.getPassword())) {
-            return ResponseEntity.ok(user);
+        if (!user.getPassword().equals(loginUser.getPassword())) {
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
 
-        return ResponseEntity.status(HttpStatus.UNAUTHORIZED).build();
+        return ResponseEntity.ok(user);
     }
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {

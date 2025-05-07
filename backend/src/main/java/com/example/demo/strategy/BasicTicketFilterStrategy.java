@@ -13,7 +13,6 @@ public class BasicTicketFilterStrategy implements TicketFilterStrategy {
     public List<TicketDetailsDTO> filter(List<TicketDetailsDTO> tickets, TicketFilterCriteria criteria) {
         return tickets.stream()
                 .filter(ticket -> {
-                    // Validări defensive (în caz că lipsesc datele din DTO)
                     if (ticket.getEvent() == null || ticket.getEvent().getDate() == null) return false;
 
                     boolean matchesPrice =

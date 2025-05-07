@@ -11,4 +11,5 @@ public interface UserService {
     User findByUsername(String username);
     User authenticate(String username, String password);
     User registerUser(User newUser);
+    User findByUsernameOrThrow(String username);
 }

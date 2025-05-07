@@ -53,4 +53,8 @@ public class UserServiceImpl implements UserService {
         }
         return userRepository.save(newUser);
     }
+    public User findByUsernameOrThrow(String username) {
+        return userRepository.findByUsername(username)
+                .orElseThrow(() -> new UserNotFoundException("User not found: " + username));
+    }
 }

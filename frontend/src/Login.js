@@ -28,9 +28,19 @@ function Login({ setUser }) {
             } else {
                 alert('Invalid credentials');
             }
-        } catch (error) {
-            console.error(error);
-            alert('Login failed. Please check your credentials.');
+        }
+        catch (error) {
+            if (error.response) {
+                if (error.response.status === 404) {
+                    alert("User not found.");
+                } else if (error.response.status === 401) {
+                    alert("Invalid credentials.");
+                } else {
+                    alert("Login failed: " + error.response.data);
+                }
+            } else {
+                alert("Network or server error.");
+            }
         }
     };
 
