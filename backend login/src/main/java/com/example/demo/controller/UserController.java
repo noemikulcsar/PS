@@ -32,17 +32,26 @@ public class UserController {
     public ResponseEntity<?> login(@RequestBody User loginUser) {
         User user = userService.findByUsernameOrThrow(loginUser.getUsername());
 
-        if (!user.getPassword().equals(loginUser.getPassword())) {
+        try {
+            User authenticatedUser = userService.authenticate(loginUser.getUsername(), loginUser.getPassword());
+            return ResponseEntity.ok(authenticatedUser);
+        } catch (RuntimeException e) {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid credentials");
         }
-
-        return ResponseEntity.ok(user);
     }
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            throw new RuntimeException("Username already taken");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already taken");
         }
-        return ResponseEntity.ok(userRepository.save(user));
+
+        User savedUser = userService.registerUser(user);
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
+    @PostMapping("/migrate")
+    public ResponseEntity<?> migratePasswords() {
+        userService.migratePasswords();
+        return ResponseEntity.ok("Parolele au fost migrate cu succes.");
+    }
+
 }

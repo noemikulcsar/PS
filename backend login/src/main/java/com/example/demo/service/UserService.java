@@ -12,4 +12,5 @@ public interface UserService {
     User authenticate(String username, String password);
     User registerUser(User newUser);
     User findByUsernameOrThrow(String username);
+    void migratePasswords();
 }
