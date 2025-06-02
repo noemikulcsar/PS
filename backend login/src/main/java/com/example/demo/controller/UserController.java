@@ -42,12 +42,13 @@ public class UserController {
     @PostMapping("/register")
     public ResponseEntity<?> registerUser(@Valid @RequestBody User user) {
         if (userRepository.existsByUsername(user.getUsername())) {
-            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already taken");
+            return ResponseEntity.status(HttpStatus.BAD_REQUEST).body("Username already exists");
         }
 
         User savedUser = userService.registerUser(user);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedUser);
     }
+
     @PostMapping("/migrate")
     public ResponseEntity<?> migratePasswords() {
         userService.migratePasswords();
